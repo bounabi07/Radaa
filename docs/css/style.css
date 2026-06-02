@@ -1,20 +1,64 @@
-/* إعدادات وتصفير عام لشاشة العرض */
+
 body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f4f6f9; 
+    color: #333;
 }
 
-/* 🌐 تنسيق حاوية زر اللغة والقائمة */
+
+header {
+    text-align: center;
+    margin-top: 20px;
+}
+
+header h1 {
+    color: #3b4b9b; 
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-transform: capitalize;
+}
+
+header hr {
+    max-width: 600px;
+    border: 0;
+    height: 1px;
+    background-color: #ddd; 
+    margin: 0 auto;
+}
+
+
+nav {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 16px;
+    color: #ccc; 
+}
+
+nav a {
+    color: #3b4b9b;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0 10px;
+    transition: color 0.2s ease;
+}
+
+nav a:hover {
+    color: #2a3775;
+    text-decoration: underline;
+}
+
+
+
 .lang-menu-container {
     position: absolute;
     top: 20px;
-    right: 20px; /* الوضع الافتراضي في أعلى اليمين للانجليزي والفرنسي */
+    right: 20px;
     z-index: 1000;
 }
 
-/* تصميم الدائرة الزرقاء التفاعلية للغة */
 .lang-circle-btn {
     width: 50px;
     height: 50px;
@@ -32,11 +76,8 @@ body {
     user-select: none;
 }
 
-.lang-circle-btn:hover {
-    transform: scale(1.05);
-}
+.lang-circle-btn:hover { transform: scale(1.05); }
 
-/* 📋 قائمة اللغات المنسدلة المخفية */
 .lang-dropdown {
     display: none;
     position: absolute;
@@ -60,27 +101,20 @@ body {
     transition: background-color 0.2s;
 }
 
-.lang-dropdown a:hover {
-    background-color: #f1f1f1;
-    color: #3b4b9b;
-}
+.lang-dropdown a:hover { background-color: #f1f1f1; color: #3b4b9b; }
 
-/* الفئة التي يستخدمها الـ JS لعرض القائمة عند الضغط */
-.show {
-    display: block;
-}
+.show { display: block; }
 
-/* 🧱 تنسيق وتوزيع حاوية المكعبات */
+
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* عمودين متساويين بجانب بعضهما */
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     max-width: 500px;
-    margin: 100px auto 20px auto; /* مسافة علوية 100px لمنع التداخل مع الدائرة */
+    margin: 60px auto 20px auto;
     padding: 10px;
 }
 
-/* التنسيق الجمالي للمكعب الواحد (الرابط) تحاكي رسمتك اليدوية */
 .cube-link {
     display: flex; 
     align-items: center; 
@@ -88,7 +122,7 @@ body {
     height: 70px; 
     background-color: #f9f9f9; 
     border: 2px solid #3b4b9b;
-    border-radius: 12px; /* حواف منحنية دائرية */
+    border-radius: 12px; 
     color: #3b4b9b; 
     text-decoration: none;
     font-family: monospace; 
@@ -97,23 +131,97 @@ body {
     transition: all 0.3s ease;
 }
 
-.cube-link:hover { 
-    background-color: #3b4b9b; 
-    color: white; 
-    transform: scale(1.05); 
+.cube-link:hover { background-color: #3b4b9b; color: white; transform: scale(1.05); }
+.full-width { grid-column: span 2; }
+
+
+
+fieldset {
+    border: none; 
+    background-color: #ffffff;
+    max-width: 400px;
+    margin: 40px auto 15px auto; 
+    padding: 30px;
+    border-radius: 16px; 
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05); 
+}
+legend {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3b4b9b;
+    margin-bottom: 25px;
+    float: left;
+    width: 100%;
 }
 
-/* جعل مكعب النصيحة يأخذ العرض بالكامل أسفل المكعبات الأخرى */
-.full-width { 
-    grid-column: span 2; 
+
+form label {
+    display: block; 
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
 }
 
-/* 🛠️ حل مشكلة التداخل: نقل الحاوية لليسار عند اختيار اللغة العربية */
-.lang-menu-container.lang-ar {
-    right: auto;
-    left: 20px;
+form input[type="text"],
+form input[type="password"],
+form input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    box-sizing: border-box; 
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
-.lang-menu-container.lang-ar .lang-dropdown {
-    right: auto;
-    left: 0;
+
+
+form input[type="text"]:focus,
+form input[type="password"]:focus,
+form input[type="email"]:focus {
+    border-color: #3b4b9b;
+    box-shadow: 0 0 0 3px rgba(59, 75, 155, 0.15);
+    outline: none;
+}
+
+
+form input[type="submit"] {
+    width: 100%;
+    background-color: #3b4b9b;
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: capitalize;
+    margin-top: 15px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+form input[type="submit"]:hover {
+    background-color: #2a3775; }
+
+form input[type="submit"]:active {
+    transform: scale(0.98); 
+}
+
+
+p {
+    text-align: center;
+    font-size: 15px;
+    color: #666;
+    margin-top: 10px;
+}
+
+p a {
+    color: #3b4b9b;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
 }
