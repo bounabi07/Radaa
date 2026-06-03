@@ -3,32 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Radaa - Secure Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
-        <h1>welcome to Radaa</h1>
-        <hr style="border: 1px solid black;">
+        <h1><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <hr>
     </header>
     <nav>
-        
-            
-            <a href="about.html">About</a>|
-            <a href="contact.html">Contact</a>
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>|
+        <a href="about.html"><i class="fa-solid fa-info-circle"></i> About</a>|
        
     </nav>
+
     <fieldset>
-        <legend>Login</legend>
-        <form method="post" action="">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email"><br><br>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password"><br><br>
-            <input type="submit" value="login">
+        <legend><i class="fa-solid fa-right-to-bracket"></i> Secure Login</legend>
+        
+        <form method="post" action="index.html">
+            <label for="email"><i class="fa-solid fa-at"></i> Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            
+            <label for="password"><i class="fa-solid fa-lock"></i> Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            
+            <button type="submit" id="loginBtn"><i class="fa-solid fa-unlock-keyhole"></i> Login to Terminal</button>
         </form>
     </fieldset>
-    <p>Don't have an account? <a href="connecte.html">Create one here.</a></p>
-    
+
+    <p class="switch-page">New to the platform? <a href="connecte.html">Create Secure Account</a></p>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
