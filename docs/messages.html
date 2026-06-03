@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radaa - Spam Message Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="lang-menu-container">
+        <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <a href="javascript:void(0)" onclick="changeLanguage('ar')">العربية (AR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('en')">English (EN)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('fr')">Français (FR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
+        </div>
+    </div>
+
+    <header>
+        <h1><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <hr>
+    </header>
+    
+    <nav>
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>|
+        <a href="about.html"><i class="fa-solid fa-info-circle"></i> About</a>|
+        <a href="déja_connecte.html" style="color: #ef4444;" data-i18n="logout"><i class="fa-solid fa-power-off"></i> Logout</a>
+    </nav>
+
+    <div class="detector-container">
+        <div class="info-box">
+            <h2 data-i18n="msg_title"><i class="fa-solid fa-comment-medical"></i> Spam Detector</h2>
+            <p data-i18n="msg_desc">Paste any suspicious message, SMS, or email below. Our security analyzer will scan the text for malicious patterns, phishing links, and fraud indicators.</p>
+        </div>
+
+        <fieldset class="scan-card">
+            <legend data-i18n="scan_title"><i class="fa-solid fa-terminal"></i> Terminal Analyzer</legend>
+            
+            <label for="spamText" data-i18n="label_text">Suspicious Text / Message:</label>
+            <textarea id="spamText" rows="6" placeholder="Paste your message here... Example: You won $1000 click here / مبروك ربحتي معانا دخل لهاد السيت..."></textarea>
+            
+            <button type="button" id="analyzeBtn"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Message</button>
+        </fieldset>
+
+        <div id="resultBox" class="result-box" style="display: none;">
+            <h3 id="resultStatus"></h3>
+            <p id="resultReason"></p>
+            <div id="suspiciousWordsContainer">
+                <strong data-i18n="detected_words">Detected Red-Flags:</strong>
+                <div id="wordsList" class="words-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
