@@ -24,11 +24,17 @@
         <hr>
     </header>
     
-    <nav>
-        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>|
-        <a href="about.html"><i class="fa-solid fa-info-circle"></i> About</a>|
-        <a href="connecte.html" style="color: #ef4444;" data-i18n="logout"><i class="fa-solid fa-power-off"></i> Logout</a>
-    </nav>
+   <nav class="nav-bar">
+    <a href="index.html">
+        <i class="fa-solid fa-house"></i> 
+        <span data-i18n="home">Home</span>
+    </a>
+    <a href="about.html">
+        <i class="fa-solid fa-info-circle"></i> 
+        <span data-i18n="about">About</span>
+    </a>
+    <a href="connecte.php" style="color: #ef4444;" data-i18n="logout"><i class="fa-solid fa-power-off"></i> Logout</a>
+</nav>
 
     <div class="detector-container">
         <div class="info-box">
@@ -42,7 +48,7 @@
             <label for="spamText" data-i18n="label_text">Suspicious Text / Message:</label>
             <textarea id="spamText" rows="6" placeholder="Paste your message here... Example: You won $1000 click here / مبروك ربحتي معانا دخل لهاد السيت..."></textarea>
             
-            <button type="button" id="analyzeBtn"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Message</button>
+            <button type="button" id="analyzeBtn" data-i18n="analyse_message"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Message</button>
         </fieldset>
 
         <div id="resultBox" class="result-box" style="display: none;">
