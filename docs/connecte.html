@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radaa - Secure Connect</title>
+    <title>Radaa - Secure Access</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -12,30 +12,48 @@
         <h1><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
         <hr>
     </header>
+
     <nav>
        
-        <a href="about.html"><i class="fa-solid fa-info-circle"></i> About</a>|
-        <a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a>
+        <a href="about.html"><i class="fa-solid fa-info-circle"></i> About</a>
+
+      
     </nav>
 
-    <fieldset>
-        <legend><i class="fa-solid fa-user-plus"></i> Create Secure Account</legend>
-        <form action="déja_connecte.html" method="post">
-            <label for="username"><i class="fa-solid fa-user"></i> Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter username" required>
-            
-            <label for="password"><i class="fa-solid fa-lock"></i> Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter strong password" required>
-            
-            <label for="email"><i class="fa-solid fa-at"></i> Email Address:</label>
-            <input type="email" id="email" name="email" placeholder="name@example.com" required>
-            
-            <button type="submit" id="submitBtn"><i class="fa-solid fa-key"></i> Create Account</button>
+    <div id="loginContainer">
+        <fieldset>
+            <legend><i class="fa-solid fa-right-to-bracket"></i> Secure Login</legend>
+            <form method="post" action="index.html" onsubmit="return handleLogin(event)">
+                <label for="loginEmail"><i class="fa-solid fa-at"></i> Email:</label>
+                <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+                
+                <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password:</label>
+                <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+                
+                <button type="submit" id="loginBtn"><i class="fa-solid fa-unlock-keyhole"></i> Login to Terminal</button>
+            </form>
+        </fieldset>
+        <p class="switch-page">New to the platform? <a href="#" onclick="showRegister(event)">Create Secure Account</a></p>
+    </div>
 
-        </form>
-    </fieldset>
-
-    <p class="switch-page">Already secured? <a href="déja_connecte.html">Access Terminal (Login)</a></p>
+    <div id="registerContainer" style="display: none;">
+        <fieldset>
+            <legend><i class="fa-solid fa-user-plus"></i> Create Secure Account</legend>
+            <form action="#" method="post" onsubmit="return handleRegister(event)">
+                <label for="username"><i class="fa-solid fa-user"></i> Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+                
+                <label for="regPassword"><i class="fa-solid fa-lock"></i> Password:</label>
+                <input type="password" id="regPassword" name="password" placeholder="Enter strong password" required>
+                
+                <label for="regEmail"><i class="fa-solid fa-at"></i> Email Address:</label>
+                <input type="email" id="regEmail" name="email" placeholder="name@example.com" required>
+                
+                <button type="submit" id="submitBtn"><i class="fa-solid fa-key"></i> Create Account</button>
+            </form>
+        </fieldset>
+        <p class="switch-page">Already secured? <a href="#" onclick="showLogin(event)">Access Terminal (Login)</a></p>
+    </div>
 
     <script src="js/script.js"></script>
 </body>

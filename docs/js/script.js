@@ -232,3 +232,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         analyzeBtn.addEventListener("click", analyzeText);
     }
 });
+
+
+
+function showRegister(event) {
+    event.preventDefault();
+    document.getElementById("loginContainer").style.display = "none";
+    document.getElementById("registerContainer").style.display = "block";
+}
+
+
+function showLogin(event) {
+    event.preventDefault();
+    document.getElementById("registerContainer").style.display = "none";
+    document.getElementById("loginContainer").style.display = "block";
+}
+
+
+function handleLogin(event) {
+   
+    console.log("🔒 Accessing platform secure shell...");
+    return true; 
+}
+
+
+function handleRegister(event) {
+    event.preventDefault();
+    alert("🎉 Account created securely! Now login to access the terminal.");
+   
+    document.getElementById("registerContainer").style.display = "none";
+    document.getElementById("loginContainer").style.display = "block";
+    return false;
+}
