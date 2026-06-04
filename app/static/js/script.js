@@ -1,8 +1,12 @@
 const translations = {
     en: {
+<<<<<<< HEAD:app/static/js/script.js
         dir: "ltr", welcome: "welcome to Radaa", logout: "Logout",analyze_btn: "Analyze Message",
+=======
+        dir: "ltr", welcome: "welcome to Radaa", logout: "Logout",analyse_message: "Analyze Message",
+>>>>>>> 5d1341525cde6652113343b04649e38b312fabc8:docs/js/script.js
         description: "Welcome to Radaa a platform that ensures you are safe from spam",
-        home: "Home", about: "About", contact: "Contact",
+        home: "Home", about: "About", 
         msg: "Messages", lnk: "Links", det: "Detect by Ai", fil: "files", adv: "Advice",
         msg_title: "Spam Message Detector",
         msg_desc: "Paste any suspicious message, SMS, or email below. Our security analyzer will scan the text for malicious patterns, phishing links, and fraud indicators.",
@@ -12,9 +16,9 @@ const translations = {
         spam_title: "⚠️ ALERT: Spam / Phishing Detected", spam_desc: "High risk! This message contains fraudulent keywords often used in social engineering scams."
     },
     ar: {
-        dir: "rtl", welcome: "مرحباً بك في ردع", 
+        dir: "rtl", welcome: "مرحباً بك في ردع", analyse_message: "فحص الرسالة", 
         description: "مرحباً بك في ردع، المنصة التي تضمن حمايتك من الرسائل المزعجة (Spam).", 
-        home: "الرئيسية", about: "من نحن", contact: "اتصل بنا",
+        home: "الرئيسية", about: "من نحن", 
         msg: "الرسائل", lnk: "الروابط", det: "الفحص بالذكاء الاصطناعي", fil: "الملفات", adv: "نصيحة",
         logout: "تسجيل الخروج",
         analyze_btn: "تحليل الرسالة",
@@ -26,9 +30,9 @@ const translations = {
         spam_title: "⚠️ تحذير: تم اكتشاف رسالة احتيالية (Spam)", spam_desc: "مستوى الخطورة عالٍ! تحتوي هذه الرسالة على كلمات دلالية مضللة تُستخدم عادةً في عمليات النصب والهندسة الاجتماعية."
     },
     fr: {
-        dir: "ltr", welcome: "Bienvenue sur Radaa", logout: "Déconnexion",
+        dir: "ltr", welcome: "Bienvenue sur Radaa", logout: "Déconnexion", analyse_message: "Analyser le message",
         description: "Bienvenue sur Radaa, une plateforme qui vous protège contre le spam.",
-        home: "Accueil", about: "À propos", contact: "Contact",
+        home: "Accueil", about: "À propos", 
         msg: "Messages", lnk: "Liens", det: "Détection par IA", fil: "Fichiers", adv: "Conseils",
         analyze_btn: "Analyser le message",
         msg_title: "Détecteur de Messages Spam",
@@ -39,9 +43,13 @@ const translations = {
         spam_title: "⚠️ ALERTE: Spam / Phishing Détecté", spam_desc: "Risque élevé! Ce message contains des mots-clés frauduleux souvent utilisés dans les arnaques d'ingénierie sociale."
     },
     ary: { 
+<<<<<<< HEAD:app/static/js/script.js
         dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج",analyze_btn: "حلل الميساج",
+=======
+        dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج",analyse_message: "حلل الميساج",
+>>>>>>> 5d1341525cde6652113343b04649e38b312fabc8:docs/js/script.js
         description: "مرحبا بيك في ردع، المنصة لي كتحميك من الميساجات ديال النصب والسبام.",
-        home: "الرئيسية", about: "شكون احنا", contact: "اتصل بنا",
+        home: "الرئيسية", about: "شكون احنا", 
         msg: "الميساجات", lnk: "الروابط", det: "الذكاء الاصطناعي", fil: "الملفات", adv: "نصيحة",
         msg_title: "كاشف الميساجات ديال النصب والسبام",
         msg_desc: "لصق أي ميساج جاك فيه الشك، سواء إس إم إس (SMS) أو إيميل هنا لتحت. السيستيم ديال منصة ردع غادي يحلل الهدرة باش يشوف واش كاين شي بلان ديال النصب، ليانات شفارة أو كذوب.", 
@@ -236,16 +244,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-
 function showRegister(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
     document.getElementById("loginContainer").style.display = "none";
     document.getElementById("registerContainer").style.display = "block";
 }
 
-
 function showLogin(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
     document.getElementById("registerContainer").style.display = "none";
     document.getElementById("loginContainer").style.display = "block";
 }
