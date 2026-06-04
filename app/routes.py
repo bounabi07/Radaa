@@ -1,45 +1,79 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
-from . import db
-from .models import Item
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 
 main = Blueprint('main', __name__)
 
-
+# 1. الصفحة الرئيسية
 @main.route('/')
 def index():
-    items = Item.query.order_by(Item.created_at.desc()).all()
-    return render_template('index.html', items=items)
+    if not session.get('logged_in'):
+        return redirect(url_for('main.login'))
+    username = session.get('username', '')
+    return render_template('index.html', username=username)
 
-
+# 2. صفحة About
 @main.route('/about')
 def about():
     return render_template('about.html')
 
+# 3. صفحة تسجيل الدخول
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        username = request.form.get('username')
 
-# ---------- API endpoints (consumed by JavaScript) ----------
+        if email and password:
+            session['logged_in'] = True
+            session['username'] = username if username else email.split('@')[0]
+            return redirect(url_for('main.index'))
+        else:
+            flash('الرجاء إدخال بيانات صحيحة')
 
-@main.route('/api/items', methods=['GET'])
-def api_get_items():
-    items = Item.query.order_by(Item.created_at.desc()).all()
-    return jsonify([item.to_dict() for item in items])
+    return render_template('connecte.html')
 
+# 4. صفحة الرسائل - محمية بالجلسة
+@main.route('/messages')
+def messages_page():
+    if not session.get('logged_in'):
+        return redirect(url_for('main.login'))
+    username = session.get('username', 'مستخدم رَدْعْ')
+    return render_template('messages.html', username=username)
 
-@main.route('/api/items', methods=['POST'])
-def api_create_item():
-    data = request.get_json()
-    if not data or not data.get('title'):
-        return jsonify({'error': 'title is required'}), 400
-    item = Item(title=data['title'], description=data.get('description', ''))
-    db.session.add(item)
-    db.session.commit()
-    return jsonify(item.to_dict()), 201
+# 5. صفحة الكشف
+@main.route('/detect')
+def detect():
+    if not session.get('logged_in'):
+        return redirect(url_for('main.login'))
+    username = session.get('username', '')
+    return render_template('detect.html', username=username)
 
+# 6. صفحة النصائح
+@main.route('/advice')
+def advice():
+    if not session.get('logged_in'):
+        return redirect(url_for('main.login'))
+    username = session.get('username', '')
+    return render_template('advice.html', username=username)
 
-@main.route('/api/items/<int:item_id>', methods=['DELETE'])
-def api_delete_item(item_id):
-    item = db.session.get(Item, item_id)
-    if item is None:
-        return jsonify({'error': 'not found'}), 404
-    db.session.delete(item)
-    db.session.commit()
-    return jsonify({'message': 'deleted'}), 200
+# 7. صفحة الروابط
+@main.route('/links')
+def links():
+    if not session.get('logged_in'):
+        return redirect(url_for('main.login'))
+    username = session.get('username', '')
+    return render_template('links.html', username=username)
+
+# 8. صفحة الملفات
+@main.route('/files')
+def files_page():
+    if not session.get('logged_in'):
+        return redirect(url_for('main.login'))
+    username = session.get('username', '')
+    return render_template('files.html', username=username)
+
+# 9. تسجيل الخروج
+@main.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('main.login'))

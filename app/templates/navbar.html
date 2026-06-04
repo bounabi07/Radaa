@@ -1,0 +1,20 @@
+<nav class="nav-bar">
+    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
+    <a href="{{ url_for('main.about') }}"><i class="fa-solid fa-info-circle"></i> <span data-i18n="about">About</span></a>
+    
+    {% if username %}
+
+        
+        <span class="user-profile" style="color: #38bdf8; margin-left: 15px; font-weight: bold;">
+            <i class="fa-solid fa-user-shield"></i> {{ username }}
+        </span>
+        <!-- ✅ صحيح - رمز واحد فقط -->
+<a href="{{ url_for('main.logout') }}" style="color: #ef4444;">
+    <i class="fa-solid fa-power-off"></i> <span data-i18n="logout">Logout</span>
+</a>
+    {% else %}
+        {% if request.endpoint != 'main.login' %}
+            <a href="{{ url_for('main.login') }}"><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="login">Login</span></a>
+        {% endif %}
+    {% endif %}
+</nav>

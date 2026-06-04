@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radaa - Secure Access</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header>
@@ -14,16 +14,15 @@
     </header>
 
     <nav>
-       
-        <a href="about.html"><i class="fa-solid fa-info-circle"></i> About</a>
-
-      
+        <a href="{{ url_for('main.about') }}">
+        <i class="fa-solid fa-info-circle"></i> <span data-i18n="about">About</span>
+    </a>
     </nav>
 
     <div id="loginContainer">
         <fieldset>
             <legend><i class="fa-solid fa-right-to-bracket"></i> Secure Login</legend>
-            <form method="post" action="index.html" onsubmit="return handleLogin(event)">
+            <form method="post" action="{{ url_for('main.login') }}" onsubmit="return handleLogin(event)">
                 <label for="loginEmail"><i class="fa-solid fa-at"></i> Email:</label>
                 <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
                 
@@ -33,13 +32,13 @@
                 <button type="submit" id="loginBtn"><i class="fa-solid fa-unlock-keyhole"></i> Login to Terminal</button>
             </form>
         </fieldset>
-        <p class="switch-page">New to the platform? <a href="#" onclick="showRegister(event)">Create Secure Account</a></p>
+        <p class="switch-page">New to the platform? <a href="{{ url_for('main.login') }}" onclick="showRegister(event)">Create Secure Account</a></p>
     </div>
 
     <div id="registerContainer" style="display: none;">
         <fieldset>
             <legend><i class="fa-solid fa-user-plus"></i> Create Secure Account</legend>
-            <form action="#" method="post" onsubmit="return handleRegister(event)">
+            <form action="{{ url_for('main.login') }}" method="post" onsubmit="return handleRegister(event)">
                 <label for="username"><i class="fa-solid fa-user"></i> Username:</label>
                 <input type="text" id="username" name="username" placeholder="Enter username" required>
                 
@@ -52,9 +51,9 @@
                 <button type="submit" id="submitBtn"><i class="fa-solid fa-key"></i> Create Account</button>
             </form>
         </fieldset>
-        <p class="switch-page">Already secured? <a href="#" onclick="showLogin(event)">Access Terminal (Login)</a></p>
+        <p class="switch-page">Already secured? <a href="{{ url_for('main.login') }}" onclick="showLogin(event)">Access Terminal (Login)</a></p>
     </div>
 
-    <script src="js/script.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

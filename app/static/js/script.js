@@ -1,6 +1,6 @@
 const translations = {
     en: {
-        dir: "ltr", welcome: "welcome to Radaa", logout: "Logout",
+        dir: "ltr", welcome: "welcome to Radaa", logout: "Logout",analyze_btn: "Analyze Message",
         description: "Welcome to Radaa a platform that ensures you are safe from spam",
         home: "Home", about: "About", contact: "Contact",
         msg: "Messages", lnk: "Links", det: "Detect by Ai", fil: "files", adv: "Advice",
@@ -17,6 +17,7 @@ const translations = {
         home: "الرئيسية", about: "من نحن", contact: "اتصل بنا",
         msg: "الرسائل", lnk: "الروابط", det: "الفحص بالذكاء الاصطناعي", fil: "الملفات", adv: "نصيحة",
         logout: "تسجيل الخروج",
+        analyze_btn: "تحليل الرسالة",
         msg_title: "كاشف الرسائل المزعجة والاحتيالية",
         msg_desc: "قم بلصق أي رسالة مشبوهة، رسالة نصية قصيرة (SMS)، أو بريد إلكتروني أدناه. سيتولى محلل الأمان في منصة ردع فحص النص لكشف الأنماط الخبيثة، روابط التصيد، ومؤشرات الاحتيال.", 
         scan_title: "محلل البيانات الآمن", label_text: "النص أو الرسالة المشبوهة:",
@@ -29,6 +30,7 @@ const translations = {
         description: "Bienvenue sur Radaa, une plateforme qui vous protège contre le spam.",
         home: "Accueil", about: "À propos", contact: "Contact",
         msg: "Messages", lnk: "Liens", det: "Détection par IA", fil: "Fichiers", adv: "Conseils",
+        analyze_btn: "Analyser le message",
         msg_title: "Détecteur de Messages Spam",
         msg_desc: "Collez tout message, SMS ou e-mail suspect ci-dessous. Notre analyseur de sécurité scannera le texte pour détecter les modèles malveillants, les liens de phishing et les indicateurs de fraude.",
         scan_title: "Analyseur de Terminal", label_text: "Texte / Message Suspect:",
@@ -37,7 +39,7 @@ const translations = {
         spam_title: "⚠️ ALERTE: Spam / Phishing Détecté", spam_desc: "Risque élevé! Ce message contains des mots-clés frauduleux souvent utilisés dans les arnaques d'ingénierie sociale."
     },
     ary: { 
-        dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج",
+        dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج",analyze_btn: "حلل الميساج",
         description: "مرحبا بيك في ردع، المنصة لي كتحميك من الميساجات ديال النصب والسبام.",
         home: "الرئيسية", about: "شكون احنا", contact: "اتصل بنا",
         msg: "الميساجات", lnk: "الروابط", det: "الذكاء الاصطناعي", fil: "الملفات", adv: "نصيحة",
@@ -132,7 +134,7 @@ function changeLanguage(lang) {
             if(key === "welcome") {
                 element.innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${translation[key]}`;
             } else if(key === "logout") {
-                element.innerHTML = `<i class="fa-solid fa-power-off"></i> ${translation[key]}`;
+                element.innerHTML = ` ${translation[key]}`;
             } else {
                 element.textContent = translation[key];
             }

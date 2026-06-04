@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radaa - Spam Message Detector</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
@@ -23,12 +23,8 @@
         <h1><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
         <hr>
     </header>
-    
-    <nav>
-        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>|
-        <a href="about.html"><i class="fa-solid fa-info-circle"></i> About</a>|
-        <a href="connecte.html" style="color: #ef4444;" data-i18n="logout"><i class="fa-solid fa-power-off"></i> Logout</a>
-    </nav>
+
+    {% include 'navbar.html' %}
 
     <div class="detector-container">
         <div class="info-box">
@@ -42,7 +38,7 @@
             <label for="spamText" data-i18n="label_text">Suspicious Text / Message:</label>
             <textarea id="spamText" rows="6" placeholder="Paste your message here... Example: You won $1000 click here / مبروك ربحتي معانا دخل لهاد السيت..."></textarea>
             
-            <button type="button" id="analyzeBtn"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Message</button>
+            <button type="button" id="analyzeBtn" data-i18n="analyze_btn"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Message</button>
         </fieldset>
 
         <div id="resultBox" class="result-box" style="display: none;">
@@ -55,6 +51,6 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
