@@ -1,10 +1,6 @@
 const translations = {
     en: {
-<<<<<<< HEAD:app/static/js/script.js
         dir: "ltr", welcome: "welcome to Radaa", logout: "Logout",analyze_btn: "Analyze Message",
-=======
-        dir: "ltr", welcome: "welcome to Radaa", logout: "Logout",analyse_message: "Analyze Message",
->>>>>>> 5d1341525cde6652113343b04649e38b312fabc8:docs/js/script.js
         description: "Welcome to Radaa a platform that ensures you are safe from spam",
         home: "Home", about: "About", 
         msg: "Messages", lnk: "Links", det: "Detect by Ai", fil: "files", adv: "Advice",
@@ -43,11 +39,7 @@ const translations = {
         spam_title: "⚠️ ALERTE: Spam / Phishing Détecté", spam_desc: "Risque élevé! Ce message contains des mots-clés frauduleux souvent utilisés dans les arnaques d'ingénierie sociale."
     },
     ary: { 
-<<<<<<< HEAD:app/static/js/script.js
         dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج",analyze_btn: "حلل الميساج",
-=======
-        dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج",analyse_message: "حلل الميساج",
->>>>>>> 5d1341525cde6652113343b04649e38b312fabc8:docs/js/script.js
         description: "مرحبا بيك في ردع، المنصة لي كتحميك من الميساجات ديال النصب والسبام.",
         home: "الرئيسية", about: "شكون احنا", 
         msg: "الميساجات", lnk: "الروابط", det: "الذكاء الاصطناعي", fil: "الملفات", adv: "نصيحة",
