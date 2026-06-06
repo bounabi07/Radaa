@@ -3,6 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from .models import User, MessageLog, LinkLog, FileLog
 main = Blueprint('main', __name__)
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 @main.route('/')
@@ -99,3 +102,61 @@ def files_page():
 def logout():
     session.clear()
     return redirect(url_for('main.login'))
+
+import requests as req
+
+@main.route('/ai_detect', methods=['POST'])
+def ai_detect():
+    if not session.get('logged_in'):
+        return jsonify({'error': 'غير مصرح'}), 401
+
+    data = request.get_json()
+    text = data.get('text', '')
+    lang = data.get('lang', 'en')
+
+    import requests as req
+    import json
+
+    OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+    url = "https://openrouter.ai/api/v1/chat/completions"
+
+    lang_name = "Arabic" if lang in ['ar', 'ary'] else "French" if lang == 'fr' else "English"
+
+    prompt = f"""You are a cybersecurity expert. Analyze this text and determine if it is spam, phishing, scam, or safe.
+
+Text: "{text}"
+
+Respond ONLY in this exact JSON format with no extra text:
+{{
+  "verdict": "SPAM",
+  "risk_score": 85,
+  "title": "short title",
+  "explanation": "detailed explanation in {lang_name}"
+}}
+verdict must be exactly: SPAM or SAFE or WARNING"""
+
+    try:
+        response = req.post(url,
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost:5000",
+                "X-Title": "Radaa"
+            },
+            json={
+                "model": "google/gemma-4-31b-it:free",
+                "messages": [{"role": "user", "content": prompt}]
+            }
+        )
+
+        raw = response.json()
+        print("OPENROUTER RESPONSE:", raw)
+
+        answer = raw['choices'][0]['message']['content']
+        answer = answer.replace("```json", "").replace("```", "").strip()
+
+        return jsonify(json.loads(answer))
+
+    except Exception as e:
+        print("ERROR:", str(e))
+        return jsonify({'error': str(e)}), 500

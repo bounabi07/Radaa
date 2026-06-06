@@ -14,7 +14,7 @@ const translations = {
         stat_features: "Features", stat_languages: "Languages", stat_powered: "Powered", stat_free: "Free",
         goals_title: "Our Goals", team_title: "The Team", tech_title: "Tech Stack", team_role: "University Student · Full Stack Developer",
         goal_1: "Detect spam & phishing messages", goal_2: "Scan malicious links", goal_3: "Analyze suspicious files",
-        goal_4: "AI-powered threat detection", goal_5: "Multilingual support", goal_6: "Keep users safe online"
+        goal_4: "AI-powered threat detection", goal_5: "Multilingual support", goal_6: "Keep users safe online",detect_title: "AI Threat Detector", detect_desc: "Paste any suspicious content. Our AI will deeply analyze it.", detect_legend: "AI Analyzer", detect_label: "Suspicious Content:", detect_btn: "Analyze with AI", detect_loading: "AI is analyzing...", detect_risk: "Risk Level:",
     },
     ar: {
         dir: "rtl", welcome: "مرحباً بك في ردع", analyse_message: "فحص الرسالة", 
@@ -22,7 +22,7 @@ const translations = {
         home: "الرئيسية", about: "من نحن", register: "تسجيل", email: "البريد الإلكتروني :", password: "كلمة المرور :", username: "اسم المستخدم :", login_btn: "تسجيل الدخول إلى الردع", create_account: "إنشاء حساب",
         msg: "الرسائل", lnk: "الروابط", det: "الفحص بالذكاء الاصطناعي", fil: "الملفات", adv: "نصيحة",
         logout: "تسجيل الخروج",login: "تسجيل الدخول", 
-        analyze_btn: "تحليل الرسالة",
+        analyze_btn: "تحليل الرسالة",detect_title: "كاشف التهديدات بالذكاء الاصطناعي", detect_desc: "الصق أي محتوى مشبوه. الذكاء الاصطناعي سيحلله بعمق.", detect_legend: "محلل الذكاء الاصطناعي", detect_label: "المحتوى المشبوه:", detect_btn: "تحليل بالذكاء الاصطناعي", detect_loading: "الذكاء الاصطناعي يحلل...", detect_risk: "مستوى الخطر:",
         msg_title: "كاشف الرسائل المزعجة والاحتيالية",
         msg_desc: "قم بلصق أي رسالة مشبوهة، رسالة نصية قصيرة (SMS)، أو بريد إلكتروني أدناه. سيتولى محلل الأمان في منصة ردع فحص النص لكشف الأنماط الخبيثة، روابط التصيد، ومؤشرات الاحتيال.", 
         scan_title: "محلل البيانات الآمن", label_text: "النص أو الرسالة المشبوهة:",
@@ -40,7 +40,7 @@ const translations = {
         description: "Bienvenue sur Radaa, une plateforme qui vous protège contre le spam.",
         home: "Accueil", about: "À propos", login: "Connexion", register: "Inscription", email: "Email :", password: "Mot de passe :", username: "Nom d'utilisateur :", login_btn: "Se connecter", create_account: "Créer un compte",
         msg: "Messages", lnk: "Liens", det: "Détection par IA", fil: "Fichiers", adv: "Conseils",
-        analyze_btn: "Analyser le message",
+        analyze_btn: "Analyser le message",detect_title: "Détecteur IA", detect_desc: "Collez tout contenu suspect. Notre IA l'analysera en profondeur.", detect_legend: "Analyseur IA", detect_label: "Contenu suspect:", detect_btn: "Analyser avec IA", detect_loading: "L'IA analyse...", detect_risk: "Niveau de risque:",
         msg_title: "Détecteur de Messages Spam",
         msg_desc: "Collez tout message, SMS ou e-mail suspect ci-dessous. Notre analyseur de sécurité scannera le texte pour détecter les modèles malveillants, les liens de phishing et les indicateurs de fraude.",
         scan_title: "Analyseur de Terminal", label_text: "Texte / Message Suspect:",
@@ -58,7 +58,7 @@ const translations = {
         description: "مرحبا بيك في ردع، المنصة لي كتحميك من الميساجات ديال النصب والسبام.",
         home: "الرئيسية", about: "شكون احنا", login: "تسجيل الدخول", register: "تسجيل", email: "البريد الإلكتروني :", password: "كلمة المرور :", username: "اسم المستخدم :", login_btn: "تسجيل الدخول إلى الردع", create_account: "إنشاء حساب",
         msg: "الميساجات", lnk: "الروابط", det: "الذكاء الاصطناعي", fil: "الملفات", adv: "نصيحة",
-        msg_title: "كاشف الميساجات ديال النصب والسبام",
+        msg_title: "كاشف الميساجات ديال النصب والسبام",detect_title: "كاشف التهديدات بالذكاء", detect_desc: "حط أي محتوى مشبوه. الذكاء الاصطناعي غادي يحلله.", detect_legend: "محلل الذكاء", detect_label: "المحتوى المشبوه:", detect_btn: "حلل بالذكاء الاصطناعي", detect_loading: "الذكاء الاصطناعي كيحلل...", detect_risk: "درجة الخطر:",
         msg_desc: "لصق أي ميساج جاك فيه الشك، سواء إس إم إس (SMS) أو إيميل هنا لتحت. السيستيم ديال منصة ردع غادي يحلل الهدرة باش يشوف واش كاين شي بلان ديال النصب، ليانات شفارة أو كذوب.", 
         scan_title: "ماكينة الفحص والتحليل", label_text: "الميساج لي شاك فيه:",
         detected_words: "الكلمات لي فرشو الميساج (خطر):",
@@ -317,3 +317,4 @@ async function saveFileLog(filename, isSafe) {
         });
     } catch (e) { console.error("Save error:", e); }
 }
+

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radaa - AI Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .detector-container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .info-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .info-box h2 { color: #38bdf8; margin-bottom: 8px; }
+        .info-box p { color: #94a3b8; }
+        .scan-card { background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .scan-card legend { color: #38bdf8; font-weight: bold; padding: 0 10px; }
+        .scan-card label { display: block; color: #94a3b8; margin-bottom: 8px; margin-top: 16px; }
+        .scan-card textarea {
+            width: 100%; background: #0f172a; border: 1px solid #334155;
+            color: #f1f5f9; border-radius: 8px; padding: 12px;
+            font-size: 0.95rem; resize: vertical; box-sizing: border-box;
+        }
+        .scan-card textarea:focus { outline: none; border-color: #38bdf8; }
+        .scan-card button {
+            margin-top: 16px; width: 100%; padding: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            color: #0f172a; font-weight: bold; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 1rem;
+            transition: opacity 0.3s;
+        }
+        .scan-card button:hover { opacity: 0.85; }
+        .scan-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .result-box { border-radius: 12px; padding: 24px; margin-top: 20px; display: none; }
+        .spam-alert { background: #1e293b; border: 2px solid #ef4444; }
+        .safe-alert { background: #1e293b; border: 2px solid #22c55e; }
+        .warn-alert { background: #1e293b; border: 2px solid #f59e0b; }
+
+        .result-box h3 { margin-bottom: 10px; font-size: 1.2rem; }
+        .spam-alert h3 { color: #ef4444; }
+        .safe-alert h3 { color: #22c55e; }
+        .warn-alert h3 { color: #f59e0b; }
+        .result-box p { color: #cbd5e1; line-height: 1.7; }
+
+        .risk-bar-container { margin-top: 16px; }
+        .risk-bar-label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 6px; }
+        .risk-bar-track {
+            background: #0f172a; border-radius: 20px;
+            height: 10px; overflow: hidden;
+        }
+        .risk-bar-fill {
+            height: 10px; border-radius: 20px;
+            transition: width 1s ease;
+        }
+
+        .loading-dots { text-align: center; padding: 20px; color: #38bdf8; display: none; }
+        .loading-dots i { animation: spin 1s linear infinite; font-size: 1.5rem; }
+        @keyframes spin { 0%{ transform: rotate(0deg); } 100%{ transform: rotate(360deg); } }
+
+        .ai-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #0f172a; border: 1px solid #38bdf8;
+            color: #38bdf8; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8rem; margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-menu-container">
+        <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <a href="javascript:void(0)" onclick="changeLanguage('ar')">العربية (AR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('en')">English (EN)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('fr')">Français (FR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
+        </div>
+    </div>
+
+    <header>
+        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <hr>
+    </header>
+
+    {% include 'navbar.html' %}
+
+    <div class="detector-container">
+        <div class="info-box">
+            <h2 data-i18n="detect_title"><i class="fa-solid fa-robot"></i> AI Threat Detector</h2>
+            <p data-i18n="detect_desc">Paste any suspicious message, link, or content below. Our AI will deeply analyze it and give you a detailed threat assessment.</p>
+        </div>
+
+        <fieldset class="scan-card">
+            <legend><i class="fa-solid fa-terminal"></i> <span data-i18n="detect_legend">AI Analyzer</span></legend>
+
+            <label data-i18n="detect_label">Suspicious Content:</label>
+            <textarea id="detectText" rows="7" placeholder="Paste message, link, email..."></textarea>
+
+            <button id="detectBtn" onclick="analyzeWithAI()">
+                <i class="fa-solid fa-brain"></i> <span data-i18n="detect_btn">Analyze with AI</span>
+            </button>
+        </fieldset>
+
+        <div class="loading-dots" id="loadingDots">
+            <i class="fa-solid fa-circle-notch"></i>
+            <p data-i18n="detect_loading">AI is analyzing...</p>
+        </div>
+
+        <div id="aiResultBox" class="result-box">
+            <div class="ai-badge"><i class="fa-solid fa-robot"></i> Gemini AI</div>
+            <h3 id="aiResultTitle"></h3>
+            <p id="aiResultText"></p>
+            <div class="risk-bar-container">
+                <div class="risk-bar-label" data-i18n="detect_risk">Risk Level:</div>
+                <div class="risk-bar-track">
+                    <div class="risk-bar-fill" id="riskBarFill" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+    
+        async function analyzeWithAI() {
+    const text = document.getElementById("detectText").value.trim();
+    if (!text) return;
+
+    const btn = document.getElementById("detectBtn");
+    const loading = document.getElementById("loadingDots");
+    const resultBox = document.getElementById("aiResultBox");
+    const currentLang = localStorage.getItem("selectedLang") || "en";
+
+    btn.disabled = true;
+    loading.style.display = "block";
+    resultBox.style.display = "none";
+
+    try {
+        const response = await fetch('/ai_detect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text, lang: currentLang })
+        });
+
+        const result = await response.json();
+
+        if (result.error) throw new Error(result.error);
+
+        resultBox.style.display = "block";
+        document.getElementById("aiResultTitle").textContent = result.title;
+        document.getElementById("aiResultText").textContent = result.explanation;
+
+        const bar = document.getElementById("riskBarFill");
+        bar.style.width = result.risk_score + "%";
+
+        if (result.verdict === "SPAM") {
+            resultBox.className = "result-box spam-alert";
+            bar.style.background = "#ef4444";
+        } else if (result.verdict === "WARNING") {
+            resultBox.className = "result-box warn-alert";
+            bar.style.background = "#f59e0b";
+        } else {
+            resultBox.className = "result-box safe-alert";
+            bar.style.background = "#22c55e";
+        }
+
+    } catch (e) {
+        resultBox.style.display = "block";
+        resultBox.className = "result-box warn-alert";
+        document.getElementById("aiResultTitle").textContent = "⚠️ Error";
+        document.getElementById("aiResultText").textContent = "Could not connect to AI: " + e.message;
+    } finally {
+        btn.disabled = false;
+        loading.style.display = "none";
+    }
+}
+    </script>
+</body>
+</html>
