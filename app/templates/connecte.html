@@ -8,8 +8,27 @@
    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    {% if error %}
+<div style="background:#ef4444; color:white; padding:10px; text-align:center; margin:10px; border-radius:8px;">
+    <i class="fa-solid fa-circle-xmark"></i> {{ error }}
+</div>
+{% endif %}
+{% if success %}
+<div style="background:#22c55e; color:white; padding:10px; text-align:center; margin:10px; border-radius:8px;">
+    <i class="fa-solid fa-circle-check"></i> {{ success }}
+</div>
+{% endif %}
+    <div class="lang-menu-container">
+        <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <a href="javascript:void(0)" onclick="changeLanguage('ar')">العربية (AR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('en')">English (EN)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('fr')">Français (FR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
+        </div>
+    </div>
     <header>
-        <h1><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
         <hr>
     </header>
 
@@ -21,15 +40,15 @@
 
     <div id="loginContainer">
         <fieldset>
-            <legend><i class="fa-solid fa-right-to-bracket"></i> Secure Login</legend>
+            <legend data-i18n="login"><i class="fa-solid fa-right-to-bracket"></i> Secure Login</legend>
             <form method="post" action="{{ url_for('main.login') }}" onsubmit="return handleLogin(event)">
-                <label for="loginEmail"><i class="fa-solid fa-at"></i> Email:</label>
+                <label for="loginEmail" data-i18n="email"><i class="fa-solid fa-at"></i> Email:</label>
                 <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
                 
-                <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password:</label>
+                <label for="loginPassword" data-i18n="password"><i class="fa-solid fa-lock"></i> Password:</label>
                 <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
                 
-                <button type="submit" id="loginBtn"><i class="fa-solid fa-unlock-keyhole"></i> Login to Terminal</button>
+                <button type="submit" id="loginBtn" data-i18n="login_btn"><i class="fa-solid fa-unlock-keyhole"></i> Login to Terminal</button>
             </form>
         </fieldset>
         <p class="switch-page">New to the platform? <a href="{{ url_for('main.login') }}" onclick="showRegister(event)">Create Secure Account</a></p>
@@ -37,18 +56,18 @@
 
     <div id="registerContainer" style="display: none;">
         <fieldset>
-            <legend><i class="fa-solid fa-user-plus"></i> Create Secure Account</legend>
+            <legend data-i18n="register"><i class="fa-solid fa-user-plus"></i> Create Secure Account</legend>
             <form action="{{ url_for('main.login') }}" method="post" onsubmit="return handleRegister(event)">
-                <label for="username"><i class="fa-solid fa-user"></i> Username:</label>
+                <label for="username" data-i18n="username"><i class="fa-solid fa-user"></i> Username:</label>
                 <input type="text" id="username" name="username" placeholder="Enter username" required>
                 
-                <label for="regPassword"><i class="fa-solid fa-lock"></i> Password:</label>
+                <label for="regPassword" data-i18n="password"><i class="fa-solid fa-lock"></i> Password:</label>
                 <input type="password" id="regPassword" name="password" placeholder="Enter strong password" required>
                 
-                <label for="regEmail"><i class="fa-solid fa-at"></i> Email Address:</label>
+                <label for="regEmail" data-i18n="email"><i class="fa-solid fa-at"></i> Email Address:</label>
                 <input type="email" id="regEmail" name="email" placeholder="name@example.com" required>
                 
-                <button type="submit" id="submitBtn"><i class="fa-solid fa-key"></i> Create Account</button>
+                <button type="submit" id="submitBtn" data-i18n="create_account"><i class="fa-solid fa-key"></i> Create Account</button>
             </form>
         </fieldset>
         <p class="switch-page">Already secured? <a href="{{ url_for('main.login') }}" onclick="showLogin(event)">Access Terminal (Login)</a></p>

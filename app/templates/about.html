@@ -1,11 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><title>رَدْعْ - حول</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radaa - About</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
 </head>
 <body>
+
+    <div class="lang-menu-container">
+        <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <a href="javascript:void(0)" onclick="changeLanguage('ar')">العربية (AR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('en')">English (EN)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('fr')">Français (FR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
+        </div>
+    </div>
+
+    <header>
+        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <hr>
+    </header>
+
     {% include 'navbar.html' %}
-    <div class="container" style="padding: 50px; text-align: center;"><h2>عن نظام رَدْعْ</h2><p>منصة برمجية متطورة مبنية بلغة بايثون لحماية المستخدمين من هجمات الهندسة الاجتماعية والتصيد الاحتيالي.</p></div>
+
+    <div class="about-wrapper">
+
+        <!-- Hero -->
+        <div class="about-hero">
+            <h2 data-i18n="about_title"><i class="fa-solid fa-shield-halved"></i> About Radaa</h2>
+            <p data-i18n="about_desc">Radaa is a cybersecurity platform designed to protect users from spam, phishing, malicious links, and suspicious files — powered by AI and built with security in mind.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">4+</div>
+                <div class="stat-label" data-i18n="stat_features">Features</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label" data-i18n="stat_languages">Languages</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">AI</div>
+                <div class="stat-label" data-i18n="stat_powered">Powered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label" data-i18n="stat_free">Free</div>
+            </div>
+        </div>
+
+        <!-- Goals -->
+        <div class="goals-section">
+            <h3><i class="fa-solid fa-bullseye"></i> <span data-i18n="goals_title">Our Goals</span></h3>
+            <ul class="goals-list">
+                <li><i class="fa-solid fa-envelope-circle-check"></i> <span data-i18n="goal_1">Detect spam & phishing messages</span></li>
+                <li><i class="fa-solid fa-link"></i> <span data-i18n="goal_2">Scan malicious links</span></li>
+                <li><i class="fa-solid fa-file-shield"></i> <span data-i18n="goal_3">Analyze suspicious files</span></li>
+                <li><i class="fa-solid fa-robot"></i> <span data-i18n="goal_4">AI-powered threat detection</span></li>
+                <li><i class="fa-solid fa-earth-africa"></i> <span data-i18n="goal_5">Multilingual support</span></li>
+                <li><i class="fa-solid fa-shield-halved"></i> <span data-i18n="goal_6">Keep users safe online</span></li>
+            </ul>
+        </div>
+
+        <!-- Team -->
+        <div class="team-section">
+            <h3><i class="fa-solid fa-users"></i> <span data-i18n="team_title">The Team</span></h3>
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div class="team-name">Mohamed Amine Bounabi</div>
+                <div class="team-role" data-i18n="team_role">University Student · Full Stack Developer</div>
+                <div class="team-links">
+                    <a href="https://github.com/bounabi07" target="_blank">
+                        <i class="fa-brands fa-github"></i> GitHub
+                    </a>
+                    <a href="https://www.linkedin.com/in/mohamed-amine-bounabi-7b2636395/" target="_blank">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="tech-section">
+            <h3><i class="fa-solid fa-code"></i> <span data-i18n="tech_title">Tech Stack</span></h3>
+            <div class="tech-tags">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">Flask</span>
+                <span class="tech-tag">SQLite</span>
+                <span class="tech-tag">SQLAlchemy</span>
+                <span class="tech-tag">HTML5</span>
+                <span class="tech-tag">CSS3</span>
+                <span class="tech-tag">JavaScript</span>
+                <span class="tech-tag">Font Awesome</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@
 </a>
     {% else %}
         {% if request.endpoint != 'main.login' %}
-            <a href="{{ url_for('main.login') }}"><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="login">Login</span></a>
+            <a href="{{ url_for('main.login') }}" ><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="login">Login</span></a>
         {% endif %}
     {% endif %}
 </nav>

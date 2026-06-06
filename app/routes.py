@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from . import db
+from .models import User, MessageLog, LinkLog, FileLog
 main = Blueprint('main', __name__)
 
-# 1. الصفحة الرئيسية
+
 @main.route('/')
 def index():
     if not session.get('logged_in'):
@@ -10,29 +12,49 @@ def index():
     username = session.get('username', '')
     return render_template('index.html', username=username)
 
-# 2. صفحة About
 @main.route('/about')
 def about():
     return render_template('about.html')
 
-# 3. صفحة تسجيل الدخول
+
+
+  
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
+        email    = request.form.get('email')
         password = request.form.get('password')
         username = request.form.get('username')
 
-        if email and password:
-            session['logged_in'] = True
-            session['username'] = username if username else email.split('@')[0]
-            return redirect(url_for('main.index'))
-        else:
-            flash('الرجاء إدخال بيانات صحيحة')
+        
+        if username:
+            existing = User.query.filter_by(email=email).first()
+            if existing:
+                flash('البريد الإلكتروني مستخدم مسبقاً')
+                return render_template('connecte.html', error='البريد الإلكتروني مستخدم مسبقاً')
+
+            hashed_pw = generate_password_hash(password)
+            new_user  = User(username=username, email=email, password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+            return render_template('connecte.html', success='تم إنشاء الحساب! سجل دخولك الآن.')
+
+      
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            return render_template('connecte.html', error='البريد الإلكتروني غير موجود')
+
+        if not check_password_hash(user.password, password):
+            return render_template('connecte.html', error='كلمة المرور غير صحيحة')
+
+        session['logged_in'] = True
+        session['username']  = user.username
+        session['user_id']   = user.id
+        return redirect(url_for('main.index'))
 
     return render_template('connecte.html')
 
-# 4. صفحة الرسائل - محمية بالجلسة
 @main.route('/messages')
 def messages_page():
     if not session.get('logged_in'):
@@ -40,7 +62,7 @@ def messages_page():
     username = session.get('username', 'مستخدم رَدْعْ')
     return render_template('messages.html', username=username)
 
-# 5. صفحة الكشف
+
 @main.route('/detect')
 def detect():
     if not session.get('logged_in'):
@@ -48,7 +70,7 @@ def detect():
     username = session.get('username', '')
     return render_template('detect.html', username=username)
 
-# 6. صفحة النصائح
+
 @main.route('/advice')
 def advice():
     if not session.get('logged_in'):
@@ -56,7 +78,7 @@ def advice():
     username = session.get('username', '')
     return render_template('advice.html', username=username)
 
-# 7. صفحة الروابط
+
 @main.route('/links')
 def links():
     if not session.get('logged_in'):
@@ -64,7 +86,7 @@ def links():
     username = session.get('username', '')
     return render_template('links.html', username=username)
 
-# 8. صفحة الملفات
+
 @main.route('/files')
 def files_page():
     if not session.get('logged_in'):
@@ -72,7 +94,7 @@ def files_page():
     username = session.get('username', '')
     return render_template('files.html', username=username)
 
-# 9. تسجيل الخروج
+
 @main.route('/logout')
 def logout():
     session.clear()

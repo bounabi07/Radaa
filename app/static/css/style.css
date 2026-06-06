@@ -310,3 +310,182 @@ textarea:focus {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+      .about-wrapper {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        
+        .about-hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border: 1px solid #38bdf8;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+        .about-hero h2 {
+            font-size: 2rem;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+        .about-hero p {
+            color: #94a3b8;
+            font-size: 1rem;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .stat-card:hover { border-color: #38bdf8; }
+        .stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+        .stat-card .stat-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+       
+        .goals-section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .goals-section h3 {
+            color: #38bdf8;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .goals-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        .goals-list li {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 14px 16px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        .goals-list li i { color: #38bdf8; min-width: 18px; }
+
+        
+        .team-section {
+            margin-bottom: 30px;
+        }
+        .team-section h3 {
+            color: #38bdf8;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .team-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid #38bdf8;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: #0f172a;
+        }
+        .team-name {
+            color: #f1f5f9;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .team-role {
+            color: #38bdf8;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .team-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        .team-links a {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .team-links a:hover {
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+
+       
+        .tech-section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .tech-section h3 {
+            color: #38bdf8;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tech-tag {
+            background: #0f172a;
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
