@@ -1,11 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><title>رَدْعْ - روابط</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radaa - Link Scanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .links-container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .info-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .info-box h2 { color: #38bdf8; margin-bottom: 8px; }
+        .info-box p { color: #94a3b8; }
+
+        .scan-card { background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .scan-card legend { color: #38bdf8; font-weight: bold; padding: 0 10px; }
+        .scan-card label { display: block; color: #94a3b8; margin-bottom: 8px; margin-top: 16px; }
+
+        .url-input-wrapper { display: flex; gap: 10px; align-items: center; }
+        .url-input-wrapper input {
+            flex: 1; background: #0f172a; border: 1px solid #334155;
+            color: #f1f5f9; border-radius: 8px; padding: 12px;
+            font-size: 0.95rem; box-sizing: border-box;
+        }
+        .url-input-wrapper input:focus { outline: none; border-color: #38bdf8; }
+        .add-url-btn {
+            background: #334155; color: #38bdf8; border: 1px solid #38bdf8;
+            border-radius: 8px; padding: 12px 16px; cursor: pointer;
+            font-size: 1rem; transition: all 0.3s; white-space: nowrap;
+        }
+        .add-url-btn:hover { background: #38bdf8; color: #0f172a; }
+
+        .url-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .url-item {
+            background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+            padding: 10px 14px; display: flex; align-items: center;
+            justify-content: space-between; color: #94a3b8; font-size: 0.9rem;
+        }
+        .url-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 85%; }
+        .url-item button {
+            background: none; border: none; color: #ef4444;
+            cursor: pointer; font-size: 1rem; padding: 0 4px;
+        }
+
+        .scan-btn {
+            margin-top: 16px; width: 100%; padding: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            color: #0f172a; font-weight: bold; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 1rem;
+            transition: opacity 0.3s;
+        }
+        .scan-btn:hover { opacity: 0.85; }
+        .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .results-section { margin-top: 20px; display: flex; flex-direction: column; gap: 14px; }
+        .result-item {
+            background: #1e293b; border-radius: 12px; padding: 18px;
+            border-left: 4px solid #334155;
+        }
+        .result-item.safe { border-left-color: #22c55e; }
+        .result-item.spam { border-left-color: #ef4444; }
+        .result-item.warning { border-left-color: #f59e0b; }
+
+        .result-item .result-url {
+            font-size: 0.85rem; color: #64748b;
+            margin-bottom: 8px; word-break: break-all;
+        }
+        .result-item .result-verdict {
+            font-size: 1rem; font-weight: bold; margin-bottom: 6px;
+        }
+        .result-item.safe .result-verdict { color: #22c55e; }
+        .result-item.spam .result-verdict { color: #ef4444; }
+        .result-item.warning .result-verdict { color: #f59e0b; }
+        .result-item .result-desc { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+
+        .risk-bar-track { background: #0f172a; border-radius: 20px; height: 8px; overflow: hidden; margin-top: 10px; }
+        .risk-bar-fill { height: 8px; border-radius: 20px; transition: width 1s ease; }
+
+        .badge-ai {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #0f172a; border: 1px solid #38bdf8;
+            color: #38bdf8; padding: 3px 10px; border-radius: 20px;
+            font-size: 0.75rem; margin-bottom: 8px;
+        }
+        .badge-kw {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #0f172a; border: 1px solid #f59e0b;
+            color: #f59e0b; padding: 3px 10px; border-radius: 20px;
+            font-size: 0.75rem; margin-bottom: 8px;
+        }
+
+        .loading-dots { text-align: center; padding: 20px; color: #38bdf8; display: none; }
+        .loading-dots i { animation: spin 1s linear infinite; font-size: 1.5rem; }
+        @keyframes spin { 0%{ transform: rotate(0deg); } 100%{ transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
+
+    <div class="lang-menu-container">
+        <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <a href="javascript:void(0)" onclick="changeLanguage('ar')">العربية (AR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('en')">English (EN)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('fr')">Français (FR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
+        </div>
+    </div>
+
+    <header>
+        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <hr>
+    </header>
+
     {% include 'navbar.html' %}
-    <div class="container" style="padding: 50px;"><h2>نظام فحص عناوين URL</h2><p>هذه الصفحة مخصصة لتحليل وفحص الروابط الخبيثة وقصيرة المدى.</p></div>
+
+    <div class="links-container">
+        <div class="info-box">
+            <h2><i class="fa-solid fa-link"></i> <span data-i18n="links_title">Link Scanner</span></h2>
+            <p data-i18n="links_desc">Add one or multiple suspicious links. Our system will scan them using keyword detection and AI analysis.</p>
+        </div>
+
+        <fieldset class="scan-card">
+            <legend><i class="fa-solid fa-terminal"></i> <span data-i18n="links_legend">URL Analyzer</span></legend>
+
+            <label data-i18n="links_label">Add Suspicious URL:</label>
+            <div class="url-input-wrapper">
+                <input type="text" id="urlInput" placeholder="https://suspicious-site.com..." />
+                <button class="add-url-btn" onclick="addUrl()">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <div class="url-list" id="urlList"></div>
+
+           
+            <button class="scan-btn" id="scanBtn" onclick="scanAllUrls()" hidden>
+                <i class="fa-solid fa-magnifying-glass-chart"></i> 
+                <span data-i18n="links_scan_btn">Scan All Links</span>
+            </button>
+        </fieldset>
+
+        <div class="loading-dots" id="loadingDots">
+            <i class="fa-solid fa-circle-notch"></i>
+            <p data-i18n="links_loading">Scanning links...</p>
+        </div>
+
+        <div class="results-section" id="resultsSection"></div>
+    </div>
+
+    <script>
+        let urlsToScan = [];
+
+        function addUrl() {
+            const input = document.getElementById("urlInput");
+            const url = input.value.trim();
+            if (!url) return;
+            if (urlsToScan.includes(url)) { input.value = ""; return; }
+            urlsToScan.push(url);
+            input.value = "";
+            renderUrlList();
+        }
+
+        document.getElementById("urlInput").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") addUrl();
+        });
+
+        function removeUrl(index) {
+            urlsToScan.splice(index, 1);
+            renderUrlList();
+        }
+
+        function renderUrlList() {
+            const list = document.getElementById("urlList");
+            const scanBtn = document.getElementById("scanBtn");
+            list.innerHTML = "";
+            urlsToScan.forEach((url, i) => {
+                list.innerHTML += `
+                    <div class="url-item">
+                        <span><i class="fa-solid fa-link" style="color:#38bdf8; margin-right:8px;"></i>${url}</span>
+                        <button onclick="removeUrl(${i})"><i class="fa-solid fa-xmark"></i></button>
+                    </div>`;
+            });
+            if (urlsToScan.length > 0) {
+                scanBtn.removeAttribute("hidden");
+            } else {
+                scanBtn.setAttribute("hidden", "");
+            }
+        }
+
+        const maliciousKeywords = [
+            "bit.ly", "tinyurl", "goo.gl", "shorturl", "ow.ly", "t.co",
+            "login", "signin", "verify", "secure", "update", "confirm",
+            "account", "banking", "paypal", "netflix", "amazon", "apple",
+            "free", "prize", "winner", "click", "urgent", "suspended",
+            "password", "credential", "phishing", "malware", "virus",
+            ".ru", ".xyz", ".tk", ".ml", ".ga", ".cf", ".gq",
+            "http://", "0.0.0.0", "192.168", "localhost"
+        ];
+
+        function quickScan(url) {
+            const lower = url.toLowerCase();
+            return maliciousKeywords.filter(kw => lower.includes(kw));
+        }
+
+        async function scanAllUrls() {
+            if (urlsToScan.length === 0) return;
+            const btn = document.getElementById("scanBtn");
+            const loading = document.getElementById("loadingDots");
+            const results = document.getElementById("resultsSection");
+            const currentLang = localStorage.getItem("selectedLang") || "en";
+            btn.disabled = true;
+            loading.style.display = "block";
+            results.innerHTML = "";
+            for (const url of urlsToScan) {
+                const keywords = quickScan(url);
+                let aiResult = null;
+                try {
+                    const response = await fetch('/ai_scan_link', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: url, lang: currentLang })
+                    });
+                    aiResult = await response.json();
+                } catch (e) { aiResult = null; }
+                renderResult(url, keywords, aiResult);
+                const isSafe = aiResult ? aiResult.verdict === "SAFE" : keywords.length === 0;
+                await saveLinkLog(url, isSafe);
+            }
+            loading.style.display = "none";
+            btn.disabled = false;
+        }
+
+        function renderResult(url, keywords, ai) {
+            const results = document.getElementById("resultsSection");
+            let cssClass = "safe", verdict = "✅ Safe", riskScore = 10, desc = "No threats detected.";
+            if (ai && ai.verdict) {
+                cssClass = ai.verdict === "SPAM" ? "spam" : ai.verdict === "WARNING" ? "warning" : "safe";
+                verdict = ai.title || ai.verdict;
+                riskScore = ai.risk_score || 10;
+                desc = ai.explanation || "";
+            } else if (keywords.length > 0) {
+                cssClass = "warning";
+                verdict = "⚠️ Suspicious Keywords";
+                riskScore = Math.min(keywords.length * 15, 90);
+                desc = "Found: " + keywords.join(", ");
+            }
+            const barColor = cssClass === "spam" ? "#ef4444" : cssClass === "warning" ? "#f59e0b" : "#22c55e";
+            results.innerHTML += `
+                <div class="result-item ${cssClass}">
+                    ${ai ? '<span class="badge-ai"><i class="fa-solid fa-robot"></i> AI</span>' : '<span class="badge-kw"><i class="fa-solid fa-key"></i> Keywords</span>'}
+                    <div class="result-url"><i class="fa-solid fa-link"></i> ${url}</div>
+                    <div class="result-verdict">${verdict}</div>
+                    <div class="result-desc">${desc}</div>
+                    ${keywords.length > 0 ? `<div style="margin-top:8px; color:#f59e0b; font-size:0.8rem;">🔑 Keywords: ${keywords.join(", ")}</div>` : ""}
+                    <div class="risk-bar-track">
+                        <div class="risk-bar-fill" style="width:${riskScore}%; background:${barColor};"></div>
+                    </div>
+                </div>`;
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

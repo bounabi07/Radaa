@@ -1,11 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><title>رَدْعْ - ملفات</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radaa - File Scanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .files-container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .info-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .info-box h2 { color: #38bdf8; margin-bottom: 8px; }
+        .info-box p { color: #94a3b8; }
+
+        .scan-card { background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .scan-card legend { color: #38bdf8; font-weight: bold; padding: 0 10px; }
+        .scan-card label { display: block; color: #94a3b8; margin-bottom: 8px; margin-top: 16px; }
+
+        .drop-zone {
+            border: 2px dashed #334155; border-radius: 12px;
+            padding: 40px 20px; text-align: center;
+            cursor: pointer; transition: all 0.3s;
+            background: #0f172a;
+        }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #38bdf8; background: #1e293b; }
+        .drop-zone i { font-size: 2.5rem; color: #334155; margin-bottom: 12px; display: block; }
+        .drop-zone p { color: #64748b; margin: 0; }
+        .drop-zone .hint { font-size: 0.8rem; color: #475569; margin-top: 6px; }
+
+        .file-preview {
+            background: #0f172a; border: 1px solid #38bdf8;
+            border-radius: 10px; padding: 14px 18px;
+            display: none; align-items: center; gap: 14px;
+            margin-top: 16px;
+        }
+        .file-preview.show { display: flex; }
+        .file-icon { font-size: 2rem; min-width: 40px; text-align: center; }
+        .file-info { flex: 1; }
+        .file-info .file-name { color: #f1f5f9; font-weight: bold; font-size: 0.95rem; }
+        .file-info .file-meta { color: #64748b; font-size: 0.8rem; margin-top: 3px; }
+        .file-remove { color: #ef4444; cursor: pointer; background: none; border: none; font-size: 1.1rem; }
+
+        .scan-btn {
+            margin-top: 16px; width: 100%; padding: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            color: #0f172a; font-weight: bold; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 1rem;
+            transition: opacity 0.3s;
+        }
+        .scan-btn:hover { opacity: 0.85; }
+        .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .result-box { border-radius: 12px; padding: 24px; margin-top: 20px; display: none; }
+        .spam-alert { background: #1e293b; border: 2px solid #ef4444; }
+        .safe-alert { background: #1e293b; border: 2px solid #22c55e; }
+        .warn-alert { background: #1e293b; border: 2px solid #f59e0b; }
+        .result-box h3 { margin-bottom: 10px; font-size: 1.2rem; }
+        .spam-alert h3 { color: #ef4444; }
+        .safe-alert h3 { color: #22c55e; }
+        .warn-alert h3 { color: #f59e0b; }
+        .result-box p { color: #cbd5e1; line-height: 1.7; }
+
+        .risk-bar-container { margin-top: 16px; }
+        .risk-bar-label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 6px; }
+        .risk-bar-track { background: #0f172a; border-radius: 20px; height: 10px; overflow: hidden; }
+        .risk-bar-fill { height: 10px; border-radius: 20px; transition: width 1s ease; }
+
+        .kw-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .kw-tag {
+            background: #0f172a; border: 1px solid #f59e0b;
+            color: #f59e0b; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
+        }
+
+        .ai-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #0f172a; border: 1px solid #38bdf8;
+            color: #38bdf8; padding: 3px 10px; border-radius: 20px;
+            font-size: 0.8rem; margin-bottom: 12px;
+        }
+
+        .loading-dots { text-align: center; padding: 20px; color: #38bdf8; display: none; }
+        .loading-dots i { animation: spin 1s linear infinite; font-size: 1.5rem; }
+        @keyframes spin { 0%{ transform: rotate(0deg); } 100%{ transform: rotate(360deg); } }
+
+        .danger-types {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+        }
+        .danger-type {
+            background: #1e293b; border: 1px solid #ef4444;
+            color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body>
+
+    <div class="lang-menu-container">
+        <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <a href="javascript:void(0)" onclick="changeLanguage('ar')">العربية (AR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('en')">English (EN)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('fr')">Français (FR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
+        </div>
+    </div>
+
+    <header>
+        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <hr>
+    </header>
+
     {% include 'navbar.html' %}
-    <div class="container" style="padding: 50px;"><h2>تحليل الملفات الضارة</h2><p>قسم مخصص لفحص المرفقات المشبوهة وامتدادات الملفات الخطيرة.</p></div>
+
+    <div class="files-container">
+        <div class="info-box">
+            <h2><i class="fa-solid fa-file-shield"></i> <span data-i18n="files_title">File Scanner</span></h2>
+            <p data-i18n="files_desc">Upload any suspicious file. Our system will analyze its name, type, and content for threats.</p>
+        </div>
+
+        <fieldset class="scan-card">
+            <legend><i class="fa-solid fa-terminal"></i> <span data-i18n="files_legend">File Analyzer</span></legend>
+
+            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p data-i18n="files_drop">Click or drag a file here</p>
+                <p class="hint" data-i18n="files_hint">Supported: .txt, .pdf, .doc, .exe, .zip, .js, .py, .sh, .bat</p>
+            </div>
+
+            <input type="file" id="fileInput" style="display:none"
+                accept=".txt,.pdf,.doc,.docx,.exe,.zip,.js,.py,.sh,.bat,.php,.html,.xml,.json,.csv">
+
+            <div class="file-preview" id="filePreview">
+                <div class="file-icon" id="fileIcon">📄</div>
+                <div class="file-info">
+                    <div class="file-name" id="fileName">-</div>
+                    <div class="file-meta" id="fileMeta">-</div>
+                </div>
+                <button class="file-remove" onclick="removeFile()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <button class="scan-btn" id="scanBtn" onclick="scanFile()" hidden>
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                <span data-i18n="files_scan_btn">Scan File</span>
+            </button>
+        </fieldset>
+
+        <div class="loading-dots" id="loadingDots">
+            <i class="fa-solid fa-circle-notch"></i>
+            <p data-i18n="files_loading">Analyzing file...</p>
+        </div>
+
+        <div id="resultBox" class="result-box">
+            <div class="ai-badge"><i class="fa-solid fa-robot"></i> AI + Keywords</div>
+            <h3 id="resultTitle"></h3>
+            <p id="resultDesc"></p>
+            <div class="kw-tags" id="kwTags"></div>
+            <div class="danger-types" id="dangerTypes"></div>
+            <div class="risk-bar-container">
+                <div class="risk-bar-label" data-i18n="files_risk">Risk Level:</div>
+                <div class="risk-bar-track">
+                    <div class="risk-bar-fill" id="riskBarFill" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFile = null;
+
+        const dangerousExtensions = [
+            ".exe", ".bat", ".sh", ".cmd", ".vbs", ".ps1", ".msi",
+            ".dll", ".scr", ".com", ".pif", ".jar", ".apk"
+        ];
+
+        const suspiciousExtensions = [
+            ".js", ".php", ".py", ".rb", ".pl", ".html", ".zip", ".rar", ".7z"
+        ];
+
+        const maliciousKeywordsInName = [
+            "crack", "hack", "virus", "malware", "trojan", "worm", "ransomware",
+            "keylogger", "spyware", "rootkit", "exploit", "payload", "backdoor",
+            "free", "keygen", "patch", "serial", "activation", "nulled"
+        ];
+
+        const maliciousKeywordsInContent = [
+            "eval(", "exec(", "system(", "shell_exec", "base64_decode",
+            "document.cookie", "window.location", "XMLHttpRequest",
+            "password", "passwd", "credit card", "bank account",
+            "bitcoin", "crypto wallet", "send money", "wire transfer",
+            "rm -rf", "del /f", "format c:", "shutdown", "netstat",
+            "wget ", "curl ", "chmod 777", "sudo su",
+            "كلمة المرور", "بطاقة بنكية", "تحويل مالي"
+        ];
+
+        
+        const dropZone = document.getElementById("dropZone");
+        dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragover"); });
+        dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+        dropZone.addEventListener("drop", e => {
+            e.preventDefault();
+            dropZone.classList.remove("dragover");
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+        });
+
+        document.getElementById("fileInput").addEventListener("change", function() {
+            if (this.files[0]) handleFile(this.files[0]);
+        });
+
+        function getFileIcon(ext) {
+            const icons = {
+                ".exe": "⚠️", ".bat": "⚠️", ".sh": "⚠️", ".cmd": "⚠️",
+                ".pdf": "📕", ".doc": "📘", ".docx": "📘",
+                ".txt": "📄", ".js": "🟨", ".py": "🐍",
+                ".zip": "🗜️", ".rar": "🗜️", ".7z": "🗜️",
+                ".php": "🔵", ".html": "🌐", ".json": "📋",
+                ".xml": "📋", ".csv": "📊"
+            };
+            return icons[ext] || "📄";
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + " B";
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+        }
+
+        function handleFile(file) {
+            currentFile = file;
+            const ext = "." + file.name.split(".").pop().toLowerCase();
+            document.getElementById("fileIcon").textContent = getFileIcon(ext);
+            document.getElementById("fileName").textContent = file.name;
+            document.getElementById("fileMeta").textContent = `${ext.toUpperCase()} • ${formatSize(file.size)}`;
+            document.getElementById("filePreview").classList.add("show");
+            document.getElementById("scanBtn").removeAttribute("hidden");
+            document.getElementById("resultBox").style.display = "none";
+        }
+
+        function removeFile() {
+            currentFile = null;
+            document.getElementById("filePreview").classList.remove("show");
+            document.getElementById("scanBtn").setAttribute("hidden", "");
+            document.getElementById("resultBox").style.display = "none";
+            document.getElementById("fileInput").value = "";
+        }
+
+        async function scanFile() {
+            if (!currentFile) return;
+
+            const btn = document.getElementById("scanBtn");
+            const loading = document.getElementById("loadingDots");
+            const resultBox = document.getElementById("resultBox");
+            const currentLang = localStorage.getItem("selectedLang") || "en";
+
+            btn.disabled = true;
+            loading.style.display = "block";
+            resultBox.style.display = "none";
+
+            const ext = "." + currentFile.name.split(".").pop().toLowerCase();
+            const fileName = currentFile.name.toLowerCase();
+
+           
+            let extRisk = "safe";
+            if (dangerousExtensions.includes(ext)) extRisk = "danger";
+            else if (suspiciousExtensions.includes(ext)) extRisk = "warning";
+
+            
+            const nameKeywords = maliciousKeywordsInName.filter(kw => fileName.includes(kw));
+
+            
+            let contentKeywords = [];
+            let fileContent = "";
+            try {
+                fileContent = await readFileContent(currentFile);
+                contentKeywords = maliciousKeywordsInContent.filter(kw =>
+                    fileContent.toLowerCase().includes(kw.toLowerCase())
+                );
+            } catch (e) { fileContent = ""; }
+
+            
+            let aiResult = null;
+            try {
+                const response = await fetch('/ai_scan_file', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        filename: currentFile.name,
+                        extension: ext,
+                        size: currentFile.size,
+                        content_preview: fileContent.substring(0, 500),
+                        lang: currentLang
+                    })
+                });
+                aiResult = await response.json();
+            } catch (e) { aiResult = null; }
+
+           
+            showResult(extRisk, nameKeywords, contentKeywords, aiResult, ext);
+
+           
+            const isSafe = aiResult ? aiResult.verdict === "SAFE" : (extRisk === "safe" && nameKeywords.length === 0 && contentKeywords.length === 0);
+            await saveFileLog(currentFile.name, isSafe);
+
+            loading.style.display = "none";
+            btn.disabled = false;
+        }
+
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+        }
+
+        function showResult(extRisk, nameKw, contentKw, ai, ext) {
+            const resultBox = document.getElementById("resultBox");
+            const resultTitle = document.getElementById("resultTitle");
+            const resultDesc = document.getElementById("resultDesc");
+            const kwTags = document.getElementById("kwTags");
+            const dangerTypesEl = document.getElementById("dangerTypes");
+            const bar = document.getElementById("riskBarFill");
+
+            let cssClass = "safe-alert";
+            let title = "✅ Safe File";
+            let desc = "No threats detected in this file.";
+            let riskScore = 10;
+            let barColor = "#22c55e";
+
+            if (ai && ai.verdict) {
+                cssClass = ai.verdict === "SPAM" ? "spam-alert" : ai.verdict === "WARNING" ? "warn-alert" : "safe-alert";
+                title = ai.title || ai.verdict;
+                desc = ai.explanation || "";
+                riskScore = ai.risk_score || 10;
+                barColor = ai.verdict === "SPAM" ? "#ef4444" : ai.verdict === "WARNING" ? "#f59e0b" : "#22c55e";
+            } else {
+                const totalFlags = (extRisk === "danger" ? 3 : extRisk === "warning" ? 1 : 0) + nameKw.length + contentKw.length;
+                if (extRisk === "danger" || totalFlags >= 3) {
+                    cssClass = "spam-alert"; title = "⚠️ Dangerous File"; riskScore = 85; barColor = "#ef4444";
+                    desc = "This file is highly suspicious based on its type and content.";
+                } else if (totalFlags > 0) {
+                    cssClass = "warn-alert"; title = "⚠️ Suspicious File"; riskScore = 50; barColor = "#f59e0b";
+                    desc = "Some suspicious indicators found.";
+                }
+            }
+
+            resultBox.className = `result-box ${cssClass}`;
+            resultTitle.textContent = title;
+            resultDesc.textContent = desc;
+            bar.style.width = riskScore + "%";
+            bar.style.background = barColor;
+
+      
+            kwTags.innerHTML = "";
+            [...nameKw, ...contentKw].forEach(kw => {
+                kwTags.innerHTML += `<span class="kw-tag">🔑 ${kw}</span>`;
+            });
+
+           
+            dangerTypesEl.innerHTML = "";
+            if (extRisk === "danger") dangerTypesEl.innerHTML += `<span class="danger-type"><i class="fa-solid fa-skull"></i> Dangerous Extension: ${ext}</span>`;
+            else if (extRisk === "warning") dangerTypesEl.innerHTML += `<span class="danger-type" style="border-color:#f59e0b; color:#f59e0b;"><i class="fa-solid fa-triangle-exclamation"></i> Suspicious Extension: ${ext}</span>`;
+
+            resultBox.style.display = "block";
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

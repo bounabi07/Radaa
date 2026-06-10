@@ -158,5 +158,125 @@ verdict must be exactly: SPAM or SAFE or WARNING"""
         return jsonify(json.loads(answer))
 
     except Exception as e:
-        print("ERROR:", str(e))
+     print("ERROR:", str(e))
+     return jsonify({'error': str(e)}), 500
+
+
+@main.route('/ai_scan_link', methods=['POST'])
+def ai_scan_link():
+    if not session.get('logged_in'):
+        return jsonify({'error': 'غير مصرح'}), 401
+
+    import requests as req
+    import json
+
+    data = request.get_json()
+    url = data.get('url', '')
+    lang = data.get('lang', 'en')
+
+    OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+    api_url = "https://openrouter.ai/api/v1/chat/completions"
+
+    lang_name = (
+        "Arabic" if lang in ['ar', 'ary']
+        else "French" if lang == 'fr'
+        else "English"
+    )
+
+    prompt = f"""You are a cybersecurity expert. Analyze this URL and determine if it is malicious, phishing, or safe.
+
+URL: "{url}"
+
+Respond ONLY in this exact JSON format:
+{{
+  "verdict": "SPAM",
+  "risk_score": 85,
+  "title": "short title",
+  "explanation": "detailed explanation in {lang_name}"
+}}
+
+verdict must be exactly: SPAM or SAFE or WARNING"""
+
+    try:
+        response = req.post(
+            api_url,
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost:5000",
+                "X-Title": "Radaa"
+            },
+            json={
+                "model": "google/gemma-4-31b-it:free",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            }
+        )
+
+        raw = response.json()
+        answer = raw['choices'][0]['message']['content']
+        answer = answer.replace("```json", "").replace("```", "").strip()
+
+        return jsonify(json.loads(answer))
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@main.route('/ai_scan_file', methods=['POST'])
+def ai_scan_file():
+    if not session.get('logged_in'):
+        return jsonify({'error': 'غير مصرح'}), 401
+
+    import requests as req
+    import json
+
+    data = request.get_json()
+    filename = data.get('filename', '')
+    extension = data.get('extension', '')
+    size = data.get('size', 0)
+    content_preview = data.get('content_preview', '')
+    lang = data.get('lang', 'en')
+
+    OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+    api_url = "https://openrouter.ai/api/v1/chat/completions"
+    lang_name = "Arabic" if lang in ['ar', 'ary'] else "French" if lang == 'fr' else "English"
+
+    prompt = f"""You are a cybersecurity expert. Analyze this file and determine if it is malicious or safe.
+
+File name: "{filename}"
+Extension: "{extension}"
+Size: {size} bytes
+Content preview: "{content_preview[:300]}"
+
+Respond ONLY in this exact JSON format:
+{{
+  "verdict": "SPAM",
+  "risk_score": 85,
+  "title": "short title",
+  "explanation": "detailed explanation in {lang_name}"
+}}
+verdict must be exactly: SPAM or SAFE or WARNING"""
+
+    try:
+        response = req.post(api_url,
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost:5000",
+                "X-Title": "Radaa"
+            },
+            json={
+                "model": "google/gemma-4-31b-it:free",
+                "messages": [{"role": "user", "content": prompt}]
+            }
+        )
+        raw = response.json()
+        answer = raw['choices'][0]['message']['content']
+        answer = answer.replace("```json", "").replace("```", "").strip()
+        return jsonify(json.loads(answer))
+    except Exception as e:
         return jsonify({'error': str(e)}), 500

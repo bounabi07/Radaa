@@ -15,6 +15,8 @@ const translations = {
         goals_title: "Our Goals", team_title: "The Team", tech_title: "Tech Stack", team_role: "University Student · Full Stack Developer",
         goal_1: "Detect spam & phishing messages", goal_2: "Scan malicious links", goal_3: "Analyze suspicious files",
         goal_4: "AI-powered threat detection", goal_5: "Multilingual support", goal_6: "Keep users safe online",detect_title: "AI Threat Detector", detect_desc: "Paste any suspicious content. Our AI will deeply analyze it.", detect_legend: "AI Analyzer", detect_label: "Suspicious Content:", detect_btn: "Analyze with AI", detect_loading: "AI is analyzing...", detect_risk: "Risk Level:",
+        links_title: "Link Scanner", links_desc: "Add suspicious links to scan them.", links_legend: "URL Analyzer", links_label: "Add Suspicious URL:", links_scan_btn: "Scan All Links", links_loading: "Scanning links...",
+        files_title: "File Scanner", files_desc: "Upload any suspicious file for analysis.", files_legend: "File Analyzer", files_drop: "Click or drag a file here", files_hint: "Supported: .txt, .pdf, .exe, .zip...", files_scan_btn: "Scan File", files_loading: "Analyzing file...", files_risk: "Risk Level:"
     },
     ar: {
         dir: "rtl", welcome: "مرحباً بك في ردع", analyse_message: "فحص الرسالة", 
@@ -34,6 +36,8 @@ const translations = {
         goals_title: "أهدافنا", team_title: "الفريق", tech_title: "التقنيات المستخدمة", team_role: "طالب جامعي · مطور متكامل",
         goal_1: "كشف رسائل Spam والتصيد", goal_2: "فحص الروابط الخبيثة", goal_3: "تحليل الملفات المشبوهة",
         goal_4: "كشف التهديدات بالذكاء الاصطناعي", goal_5: "دعم متعدد اللغات", goal_6: "حماية المستخدمين على الإنترنت"
+        ,links_title: "فاحص الروابط", links_desc: "أضف الروابط المشبوهة لفحصها.", links_legend: "محلل الروابط", links_label: "أضف رابطاً مشبوهاً:", links_scan_btn: "فحص جميع الروابط", links_loading: "جارٍ فحص الروابط...",
+        files_title: "فاحص الملفات", files_desc: "ارفع أي ملف مشبوه للتحليل.", files_legend: "محلل الملفات", files_drop: "اضغط أو اسحب ملفاً هنا", files_hint: "مدعوم: txt, pdf, exe, zip...", files_scan_btn: "فحص الملف", files_loading: "جارٍ تحليل الملف...", files_risk: "مستوى الخطر:"
     },
     fr: {
         dir: "ltr", welcome: "Bienvenue sur Radaa", logout: "Déconnexion", analyse_message: "Analyser le message",
@@ -51,7 +55,8 @@ const translations = {
         stat_features: "Fonctionnalités", stat_languages: "Langues", stat_powered: "Propulsé par IA", stat_free: "Gratuit",
         goals_title: "Nos Objectifs", team_title: "L'Équipe", tech_title: "Technologies", team_role: "Étudiant Universitaire · Développeur Full Stack",
         goal_1: "Détecter spam et phishing", goal_2: "Scanner les liens malveillants", goal_3: "Analyser les fichiers suspects",
-        goal_4: "Détection IA des menaces", goal_5: "Support multilingue", goal_6: "Protéger les utilisateurs en ligne"
+        goal_4: "Détection IA des menaces", goal_5: "Support multilingue", goal_6: "Protéger les utilisateurs en ligne",links_title: "Scanner de Liens", links_desc: "Ajoutez des liens suspects pour les analyser.", links_legend: "Analyseur d'URL", links_label: "Ajouter un lien suspect:", links_scan_btn: "Scanner tous les liens", links_loading: "Analyse en cours...",
+        files_title: "Scanner de Fichiers", files_desc: "Téléchargez tout fichier suspect pour analyse.", files_legend: "Analyseur de Fichiers", files_drop: "Cliquez ou glissez un fichier ici", files_hint: "Supporté: .txt, .pdf, .exe, .zip...", files_scan_btn: "Scanner le fichier", files_loading: "Analyse du fichier en cours...", files_risk: "Niveau de risque:"
     },
     ary: { 
         dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج",analyze_btn: "حلل الميساج",
@@ -68,77 +73,85 @@ const translations = {
         stat_features: "الميزات", stat_languages: "اللغات", stat_powered: "بالذكاء", stat_free: "بالمجان",
         goals_title: "الأهداف ديالنا", team_title: "الفريق", tech_title: "التكنولوجيا", team_role: "طالب جامعي · مطور فول ستاك",
         goal_1: "كشف ميساجات النصب والسبام", goal_2: "فحص الليانات الخطرة", goal_3: "تحليل الملفات المشبوهة",
-        goal_4: "كشف التهديدات بالذكاء الاصطناعي", goal_5: "دعم جميع اللغات", goal_6: "حماية العباد على الانترنت"
+        goal_4: "كشف التهديدات بالذكاء الاصطناعي", goal_5: "دعم جميع اللغات", goal_6: "حماية العباد على الانترنت", links_title: "فاحص الليانات", links_desc: "حط الليانات المشبوهة باش نفحصوهم.", links_legend: "محلل الليانات", links_label: "زيد رابط مشبوه:", links_scan_btn: "فحص جميع الليانات", links_loading: "كنفحصو الليانات...",
+        files_title: "فاحص الملفات", files_desc: "حط أي ملف مشبوه باش نفحصوه.", files_legend: "محلل الملفات", files_drop: "اضغط أو سحب ملف هنا", files_hint: "مدعوم: txt, pdf, exe, zip...", files_scan_btn: "فحص الملف", files_loading: "كنحللو الملف...", files_risk: "درجة الخطر:"
     }
 };
 
-
 const LOCAL_DATABASES = {
-    en_sms_spam: "data/en_spam.csv",
-    fr_phishing: "data/fr_phishing.txt",
-    ar_spam: "data/ar_spam.txt",
-    ary_moroccan: "data/ary_moroccan.json"
+    en_sms_spam: "/static/data/final_dataset_output.csv",
+    fr_phishing: "/static/data/french_spam.json"
 };
+
+
+const LATIN_STOP_WORDS = ["chat", "dans", "pour", "avec", "sans", "mais", "vous", "nous", "elle", "this", "that", "with", "from", "your", "have"];
 
 let remoteSpamKeywords = [];
 
-
 async function loadAllLocalDatasets() {
     console.log("⏳ Loading local security databases...");
+    remoteSpamKeywords = []; 
     
     try {
-      
-        const [resEn, resFr, resAr, resAry] = await Promise.all([
+        const [resEn, resFr, resTriggers] = await Promise.all([
             fetch(LOCAL_DATABASES.en_sms_spam).then(r => r.ok ? r.text() : ""),
             fetch(LOCAL_DATABASES.fr_phishing).then(r => r.ok ? r.text() : ""),
-            fetch(LOCAL_DATABASES.ar_spam).then(r => r.ok ? r.text() : ""),
-            fetch(LOCAL_DATABASES.ary_moroccan).then(r => r.ok ? r.json() : null)
+            fetch("/static/data/triggers.json").then(r => r.ok ? r.json() : null)
         ]);
 
+       
         if (resEn) {
             const lines = resEn.split("\n");
             for (let i = 1; i < lines.length; i++) {
-                const match = lines[i].split(",");
-                if (match && match[1]) {
-                    const words = match[1].toLowerCase().replace(/[^a-z ]/g, "").split(" ");
-                    words.forEach(w => {
-                        if (w.length > 3 && !remoteSpamKeywords.includes(w)) remoteSpamKeywords.push(w);
-                    });
-                }
+                if (!lines[i].trim()) continue;
+                
+                const cleanLine = lines[i].toLowerCase().replace(/[^a-z0-9 ]/g, " ");
+                const words = cleanLine.split(/\s+/);
+                
+                words.forEach(w => {
+                    if (w.length >= 5 && !LATIN_STOP_WORDS.includes(w) && !remoteSpamKeywords.includes(w)) {
+                        remoteSpamKeywords.push(w);
+                    }
+                });
             }
         }
 
-      
-        const txtData = resFr + "\n" + resAr;
-        txtData.split("\n").forEach(line => {
-            const clean = line.trim().toLowerCase();
-            if (clean && clean.length > 2 && !remoteSpamKeywords.includes(clean)) {
-                remoteSpamKeywords.push(clean);
-            }
-        });
-
-       
-        if (resAry) {
-            const aryList = resAry.keywords || resAry;
-            aryList.forEach(k => {
-                if (!remoteSpamKeywords.includes(k.toLowerCase())) remoteSpamKeywords.push(k.toLowerCase());
+     
+        if (resFr) {
+            const frLines = resFr.split("\n");
+            frLines.forEach(line => {
+                if (line.trim()) {
+                    try {
+                        const jsonObj = JSON.parse(line);
+                        if (jsonObj.text) {
+                            const frWords = jsonObj.text.toLowerCase().replace(/[^a-zA-Zàâæçéèêëîïôœùûüÿ ]/g, "").split(/\s+/);
+                            frWords.forEach(w => {
+                                if (w.length >= 5 && !LATIN_STOP_WORDS.includes(w) && !remoteSpamKeywords.includes(w)) {
+                                    remoteSpamKeywords.push(w);
+                                }
+                            });
+                        }
+                    } catch (e) {}
+                }
             });
         }
 
-        const ultimateTriggers = [
-            "impôt", "amende", "135€", "régularisez", "renewal", "credits", "topped up", "bubbletext", "tgxxrz",
-            "درهم", "تربح", "دراهم", "خمسة", "فايسبوك", "فيسبوك", "facebook", "password", "تهكيرك", "نسرقك"
-        ];
-        ultimateTriggers.forEach(t => {
-            if (!remoteSpamKeywords.includes(t)) remoteSpamKeywords.push(t);
-        });
+       
+        if (resTriggers && Array.isArray(resTriggers)) {
+            resTriggers.forEach(t => {
+                const cleanT = t.trim().toLowerCase();
+               
+                if (cleanT && cleanT.length > 2 && !remoteSpamKeywords.includes(cleanT)) {
+                    remoteSpamKeywords.push(cleanT);
+                }
+            });
+        }
 
         console.log("🛡️ Success! Local databases loaded. Active filters: " + remoteSpamKeywords.length);
     } catch (error) {
         console.error("❌ Error reading local files:", error);
     }
 }
-
 
 function changeLanguage(lang) {
     localStorage.setItem("selectedLang", lang);
@@ -186,7 +199,6 @@ window.onclick = function(event) {
     }
 }
 
-
 async function analyzeText() {
     const rawText = document.getElementById("spamText").value.trim();
     const resultBox = document.getElementById("resultBox");
@@ -201,12 +213,27 @@ async function analyzeText() {
     }
 
     const cleanText = rawText.toLowerCase();
+  
+    const inputWords = cleanText.replace(/[^a-zA-Z0-9\u0600-\u06FFàâæçéèêëîïôœùûüÿ]/g, " ").split(/\s+/);
+    
     let foundSpamWords = [];
 
     remoteSpamKeywords.forEach(keyword => {
-        if (cleanText.includes(keyword)) {
-            if (!foundSpamWords.includes(keyword)) {
-                foundSpamWords.push(keyword);
+        const isArabicKeyword = /[\u0600-\u06FF]/.test(keyword);
+
+        if (isArabicKeyword) {
+          
+            if (cleanText.includes(keyword)) {
+                if (!foundSpamWords.includes(keyword)) {
+                    foundSpamWords.push(keyword);
+                }
+            }
+        } else {
+           
+            if (inputWords.includes(keyword)) {
+                if (!foundSpamWords.includes(keyword)) {
+                    foundSpamWords.push(keyword);
+                }
             }
         }
     });
@@ -233,7 +260,6 @@ async function analyzeText() {
             wordsList.appendChild(span);
         });
 
-     
         await saveMessageLog(rawText, true);
 
     } else {
@@ -241,17 +267,14 @@ async function analyzeText() {
         resultStatus.textContent = translations[currentLang].safe_title;
         resultReason.textContent = translations[currentLang].safe_desc;
         document.getElementById("suspiciousWordsContainer").style.display = "none";
-
         
         await saveMessageLog(rawText, false);
     }
 }
 
-
 document.addEventListener("DOMContentLoaded", async () => {
     const savedLang = localStorage.getItem("selectedLang") || "en";
     changeLanguage(savedLang);
-
     
     await loadAllLocalDatasets();
 
@@ -260,7 +283,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         analyzeBtn.addEventListener("click", analyzeText);
     }
 });
-
 
 function showRegister(event) {
     if (event) event.preventDefault();
@@ -274,17 +296,8 @@ function showLogin(event) {
     document.getElementById("loginContainer").style.display = "block";
 }
 
-
-function handleLogin(event) {
-   
-    return true;
-}
-
-
-function handleRegister(event) {
-    
-    return true;
-}
+function handleLogin(event) { return true; }
+function handleRegister(event) { return true; }
 
 async function saveMessageLog(content, isSpam) {
     try {
@@ -296,7 +309,6 @@ async function saveMessageLog(content, isSpam) {
     } catch (e) { console.error("Save error:", e); }
 }
 
-
 async function saveLinkLog(url, isSafe) {
     try {
         await fetch('/save_link', {
@@ -307,7 +319,6 @@ async function saveLinkLog(url, isSafe) {
     } catch (e) { console.error("Save error:", e); }
 }
 
-
 async function saveFileLog(filename, isSafe) {
     try {
         await fetch('/save_file', {
@@ -317,4 +328,3 @@ async function saveFileLog(filename, isSafe) {
         });
     } catch (e) { console.error("Save error:", e); }
 }
-
