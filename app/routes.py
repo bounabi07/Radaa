@@ -280,3 +280,80 @@ verdict must be exactly: SPAM or SAFE or WARNING"""
         return jsonify(json.loads(answer))
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@main.route('/check_email', methods=['POST'])
+def check_email():
+    if not session.get('logged_in'):
+        return jsonify({'error': 'غير مصرح'}), 401
+
+    import requests as req
+    import dns.resolver
+    data = request.get_json()
+    email = data.get('email', '')
+
+    result = {}
+
+   
+    try:
+        leak_response = req.get(f"https://api.xposedornot.com/v1/check-email/{email}")
+        leak_data = leak_response.json()
+
+        if "breaches" in leak_data and leak_data["breaches"]:
+            breaches = leak_data["breaches"]
+            result['leaks'] = {
+                "found": len(breaches),
+                "result": [{"source": {"name": b, "breach_date": ""}, "fields": []} for b in breaches]
+            }
+        else:
+            result['leaks'] = {"found": 0, "result": []}
+    except Exception as e:
+        result['leaks'] = {'error': str(e)}
+
+   
+    try:
+        domain = ''
+        if '@' in email:
+            parts = email.split('@')
+            if len(parts) == 2:
+                domain = parts[1].lower()
+
+        is_valid_format = ('@' in email) and ('.' in domain)
+
+        try:
+            mx_records = dns.resolver.resolve(domain, 'MX') if domain else []
+            is_mx_found = len(mx_records) > 0
+        except Exception:
+            is_mx_found = False
+
+    
+        try:
+            resp = req.get(
+                "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt",
+                timeout=10
+            )
+            DISPOSABLE_DOMAINS = set(
+                line.strip().lower() for line in resp.text.splitlines()
+                if line.strip() and not line.startswith('#')
+            )
+        except Exception:
+            DISPOSABLE_DOMAINS = set()
+
+        is_disposable = domain in DISPOSABLE_DOMAINS
+
+        free_domains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com']
+        is_free = domain in free_domains
+
+        quality = 0.9 if (is_valid_format and is_mx_found and not is_disposable) else (0.1 if is_disposable else 0.5)
+
+        result['validation'] = {
+            "is_valid_format": {"value": is_valid_format},
+            "is_mx_found": {"value": is_mx_found},
+            "is_smtp_valid": {"value": is_mx_found},
+            "is_disposable_email": {"value": is_disposable},
+            "is_free_email": {"value": is_free},
+            "quality_score": quality
+        }
+    except Exception as e:
+        result['validation'] = {'error': str(e)}
+
+    return jsonify(result)

@@ -3,9 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radaa - Spam Message Detector</title>
+    <title>Radaa - Email Scanner</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .email-container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .info-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .info-box h2 { color: #38bdf8; margin-bottom: 8px; }
+        .info-box p { color: #94a3b8; }
+
+        .scan-card { background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .scan-card legend { color: #38bdf8; font-weight: bold; padding: 0 10px; }
+        .scan-card label { display: block; color: #94a3b8; margin-bottom: 8px; margin-top: 16px; }
+
+        .input-wrapper { display: flex; gap: 10px; }
+        .input-wrapper input {
+            flex: 1; background: #0f172a; border: 1px solid #334155;
+            color: #f1f5f9; border-radius: 8px; padding: 12px;
+            font-size: 0.95rem; box-sizing: border-box;
+        }
+        .input-wrapper input:focus { outline: none; border-color: #38bdf8; }
+
+        .scan-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            color: #0f172a; font-weight: bold; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 1rem;
+            transition: opacity 0.3s; white-space: nowrap;
+        }
+        .scan-btn:hover { opacity: 0.85; }
+        .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .loading-dots { text-align: center; padding: 20px; color: #38bdf8; display: none; }
+        .loading-dots i { animation: spin 1s linear infinite; font-size: 1.5rem; }
+        @keyframes spin { 0%{ transform: rotate(0deg); } 100%{ transform: rotate(360deg); } }
+
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+        @media(max-width: 600px) { .results-grid { grid-template-columns: 1fr; } }
+
+        .result-card {
+            background: #1e293b; border: 1px solid #334155;
+            border-radius: 12px; padding: 20px;
+        }
+        .result-card h3 { color: #38bdf8; margin-bottom: 16px; font-size: 1rem; }
+
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; border-radius: 8px; font-weight: bold;
+            font-size: 0.9rem; margin-bottom: 12px;
+        }
+        .badge-safe { background: #14532d; color: #22c55e; border: 1px solid #22c55e; }
+        .badge-danger { background: #450a0a; color: #ef4444; border: 1px solid #ef4444; }
+        .badge-warning { background: #431407; color: #f59e0b; border: 1px solid #f59e0b; }
+
+        .detail-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0; border-bottom: 1px solid #1e293b; font-size: 0.85rem;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: #64748b; }
+        .detail-value { color: #f1f5f9; font-weight: 500; }
+        .detail-value.green { color: #22c55e; }
+        .detail-value.red { color: #ef4444; }
+        .detail-value.yellow { color: #f59e0b; }
+
+        .breach-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .breach-item {
+            background: #0f172a; border: 1px solid #ef4444;
+            border-radius: 8px; padding: 10px 14px;
+        }
+        .breach-item .breach-source { color: #ef4444; font-weight: bold; font-size: 0.9rem; }
+        .breach-item .breach-date { color: #64748b; font-size: 0.8rem; margin-top: 3px; }
+        .breach-item .breach-types { color: #94a3b8; font-size: 0.8rem; margin-top: 3px; }
+
+        .full-width { grid-column: 1 / -1; }
+    </style>
 </head>
 <body>
 
@@ -20,36 +92,174 @@
     </div>
 
     <header>
-        <h1> <span data-i18n="welcome">welcome to Radaa</span></h1>
+        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
         <hr>
     </header>
 
     {% include 'navbar.html' %}
 
-    <div class="detector-container">
+    <div class="email-container">
         <div class="info-box">
-            <h2 data-i18n="msg_title"><i class="fa-solid fa-comment-medical"></i> Spam Detector</h2>
-            <p data-i18n="msg_desc">Paste any suspicious message, SMS, or email below. Our security analyzer will scan the text for malicious patterns, phishing links, and fraud indicators.</p>
+            <h2><i class="fa-solid fa-at"></i> <span data-i18n="email_title">Email Security Scanner</span></h2>
+            <p data-i18n="email_desc">Check if your email has been leaked in any data breach and verify its validity.</p>
         </div>
 
         <fieldset class="scan-card">
-            <legend data-i18n="scan_title"><i class="fa-solid fa-terminal"></i> Terminal Analyzer</legend>
-            
-            <label for="spamText" data-i18n="label_text">Suspicious Text / Message:</label>
-            <textarea id="spamText" rows="6" placeholder="Paste your message here... Example: You won $1000 click here / مبروك ربحتي معانا دخل لهاد السيت..."></textarea>
-            
-            <button type="button" id="analyzeBtn" data-i18n="analyze_btn"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Message</button>
+            <legend><i class="fa-solid fa-terminal"></i> <span data-i18n="email_legend">Email Analyzer</span></legend>
+            <label data-i18n="email_label">Enter Email Address:</label>
+            <div class="input-wrapper">
+                <input type="email" id="emailInput" placeholder="example@domain.com" />
+                <button class="scan-btn" id="scanBtn" onclick="scanEmail()">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="email_scan_btn">Scan</span>
+                </button>
+            </div>
         </fieldset>
 
-        <div id="resultBox" class="result-box" style="display: none;">
-            <h3 id="resultStatus"></h3>
-            <p id="resultReason"></p>
-            <div id="suspiciousWordsContainer">
-                <strong data-i18n="detected_words">Detected Red-Flags:</strong>
-                <div id="wordsList" class="words-list"></div>
+        <div class="loading-dots" id="loadingDots">
+            <i class="fa-solid fa-circle-notch"></i>
+            <p data-i18n="email_loading">Scanning email...</p>
+        </div>
+
+        <div class="results-grid" id="resultsGrid" style="display:none;">
+
+          
+            <div class="result-card" id="leakCard">
+                <h3><i class="fa-solid fa-database"></i> <span data-i18n="email_leak_title">Data Breach Check</span></h3>
+                <div id="leakStatus"></div>
+                <div class="breach-list" id="breachList"></div>
             </div>
+
+           
+            <div class="result-card" id="validCard">
+                <h3><i class="fa-solid fa-circle-check"></i> <span data-i18n="email_valid_title">Email Validation</span></h3>
+                <div id="validStatus"></div>
+                <div id="validDetails"></div>
+            </div>
+
         </div>
     </div>
+
+    <script>
+        async function scanEmail() {
+            const email = document.getElementById("emailInput").value.trim();
+            if (!email) return;
+
+            const btn = document.getElementById("scanBtn");
+            const loading = document.getElementById("loadingDots");
+            const grid = document.getElementById("resultsGrid");
+
+            btn.disabled = true;
+            loading.style.display = "block";
+            grid.style.display = "none";
+
+            try {
+                const response = await fetch('/check_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+                loading.style.display = "none";
+            }
+        }
+
+        document.getElementById("emailInput").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") scanEmail();
+        });
+
+        function showResults(data) {
+            const grid = document.getElementById("resultsGrid");
+            grid.style.display = "grid";
+
+            
+            const leakStatus = document.getElementById("leakStatus");
+            const breachList = document.getElementById("breachList");
+            breachList.innerHTML = "";
+
+            const leaks = data.leaks;
+            if (leaks.error) {
+                leakStatus.innerHTML = `<div class="status-badge badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> Error</div>`;
+            } else if (leaks.found && leaks.found > 0) {
+                leakStatus.innerHTML = `
+                    <div class="status-badge badge-danger">
+                        <i class="fa-solid fa-skull-crossbones"></i> 
+                        Leaked in ${leaks.found} breach${leaks.found > 1 ? 'es' : ''}!
+                    </div>`;
+
+                if (leaks.result && leaks.result.length > 0) {
+                    leaks.result.forEach(breach => {
+                        breachList.innerHTML += `
+                            <div class="breach-item">
+                                <div class="breach-source"><i class="fa-solid fa-circle-xmark"></i> ${breach.source?.name || 'Unknown'}</div>
+                                <div class="breach-date">${breach.source?.breach_date || ''}</div>
+                                <div class="breach-types">${(breach.fields || []).join(', ')}</div>
+                            </div>`;
+                    });
+                }
+            } else {
+                leakStatus.innerHTML = `
+                    <div class="status-badge badge-safe">
+                        <i class="fa-solid fa-shield-halved"></i> Not found in any breach
+                    </div>`;
+            }
+
+           
+            const validStatus = document.getElementById("validStatus");
+            const validDetails = document.getElementById("validDetails");
+            const v = data.validation;
+
+            if (v.error) {
+                validStatus.innerHTML = `<div class="status-badge badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> Error</div>`;
+                return;
+            }
+
+            const isValid = v.is_valid_format?.value;
+            const isFree = v.is_free_email?.value;
+            const isDisposable = v.is_disposable_email?.value;
+            const isMx = v.is_mx_found?.value;
+            const isSmtp = v.is_smtp_valid?.value;
+            const quality = v.quality_score;
+
+            if (isDisposable) {
+                validStatus.innerHTML = `<div class="status-badge badge-danger"><i class="fa-solid fa-ban"></i> Disposable Email!</div>`;
+            } else if (!isValid || !isMx) {
+                validStatus.innerHTML = `<div class="status-badge badge-danger"><i class="fa-solid fa-xmark"></i> Invalid Email</div>`;
+            } else {
+                validStatus.innerHTML = `<div class="status-badge badge-safe"><i class="fa-solid fa-check"></i> Valid Email</div>`;
+            }
+
+            validDetails.innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">Format</span>
+                    <span class="detail-value ${isValid ? 'green' : 'red'}">${isValid ? '✅ Valid' : '❌ Invalid'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">MX Records</span>
+                    <span class="detail-value ${isMx ? 'green' : 'red'}">${isMx ? '✅ Found' : '❌ Not Found'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">SMTP Valid</span>
+                    <span class="detail-value ${isSmtp ? 'green' : 'red'}">${isSmtp ? '✅ Yes' : '❌ No'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Disposable</span>
+                    <span class="detail-value ${isDisposable ? 'red' : 'green'}">${isDisposable ? '⚠️ Yes' : '✅ No'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Free Email</span>
+                    <span class="detail-value ${isFree ? 'yellow' : 'green'}">${isFree ? '📧 Yes' : '🏢 No'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Quality Score</span>
+                    <span class="detail-value ${quality > 0.7 ? 'green' : quality > 0.4 ? 'yellow' : 'red'}">${(quality * 100).toFixed(0)}%</span>
+                </div>`;
+        }
+    </script>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
