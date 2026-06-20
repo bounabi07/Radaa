@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+                .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(180deg,
+                    rgba(10, 14, 26, 0.40) 0%,
+                    rgba(10, 14, 26, 0.45) 50%,
+                    rgba(10, 14, 26, 0.70) 100%),
+                url('{{ url_for('static', filename='images/links.jpg')}}')
+                center/cover no-repeat fixed;
+        }
         .links-container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
         .info-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .info-box h2 { color: #38bdf8; margin-bottom: 8px; }
@@ -95,7 +107,7 @@
     </style>
 </head>
 <body>
-
+    <div class="hero-bg"></div> 
     <div class="lang-menu-container">
         <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
         <div class="lang-dropdown" id="langDropdown">

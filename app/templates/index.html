@@ -6,8 +6,141 @@
     <title>Radaa - Cyber Security Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(180deg,
+                    rgba(10, 14, 26, 0.50) 0%,
+                    rgba(10, 14, 26, 0.35) 40%,
+                    rgba(10, 14, 26, 0.55) 100%),
+                url("{{ url_for('static', filename='images/aga1.jpg') }}")
+                center/cover no-repeat fixed;
+        }
+
+       
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px 30px;
+            position: relative;
+        }
+
+        .hero-section .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            backdrop-filter: blur(10px);
+            color: #38bdf8;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-section h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 16px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero-section h1 i {
+            -webkit-text-fill-color: #38bdf8;
+        }
+
+        .hero-desc {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+            animation: fadeInUp 1s ease;
+        }
+
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            max-width: 520px;
+            margin: 0 auto 60px;
+            padding: 10px 20px;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .cube-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 90px;
+            background: rgba(30, 41, 59, 0.55);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            color: #f1f5f9;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cube-link::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg,
+                rgba(56, 189, 248, 0.2),
+                rgba(129, 140, 248, 0.2));
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .cube-link:hover {
+            border-color: #38bdf8;
+            color: #fff;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow:
+                0 10px 40px rgba(56, 189, 248, 0.3),
+                0 0 0 1px rgba(56, 189, 248, 0.3);
+        }
+
+        .cube-link:hover::after { opacity: 1; }
+        .full-width { grid-column: span 2; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+
+    </style>
 </head>
 <body>
+
+    <div class="hero-bg"></div>
+    <div class="city-glow"></div>
 
     <div class="lang-menu-container">
         <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
@@ -19,21 +152,39 @@
         </div>
     </div>
 
-    <header>
-        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
-        <hr>
-    </header>
-
     {% include 'navbar.html' %}
-    
-    <p data-i18n="description" style="text-align: center; color: #38bdf8;">Welcome to Radaa a platform that ensures you are safe from spam</p>
 
-    <div class="grid-container">
-        <a href="{{ url_for('main.messages_page') }}" class="cube-link" data-i18n="msg">Messages</a>
-        <a href="{{ url_for('main.links') }}" class="cube-link" data-i18n="lnk">Links</a>
-        <a href="{{ url_for('main.detect') }}" class="cube-link" data-i18n="det">Detect by Ai</a>
-        <a href="{{ url_for('main.files_page') }}" class="cube-link" data-i18n="fil">files</a>
-        <a href="{{ url_for('main.advice') }}" class="cube-link full-width" data-i18n="adv">Advice</a>
+    <div class="hero-section">
+
+        <h1 data-i18n="welcome">
+            <i class="fa-solid fa-shield-halved"></i> welcome to Radaa
+        </h1>
+        <p class="hero-desc" data-i18n="description">
+            Welcome to Radaa a platform that ensures you are safe from spam
+        </p>
+
+        <div class="grid-container">
+            <a href="{{ url_for('main.messages_page') }}" class="cube-link">
+                <i class="fa-solid fa-envelope-circle-check"></i>
+                <span data-i18n="msg">Messages</span>
+            </a>
+            <a href="{{ url_for('main.links') }}" class="cube-link">
+                <i class="fa-solid fa-link"></i>
+                <span data-i18n="lnk">Links</span>
+            </a>
+            <a href="{{ url_for('main.email_page') }}" class="cube-link">
+                <i class="fa-solid fa-at"></i>
+                <span data-i18n="eml">Email</span>
+            </a>
+            <a href="{{ url_for('main.files_page') }}" class="cube-link">
+                <i class="fa-solid fa-file-shield"></i>
+                <span data-i18n="fil">Files</span>
+            </a>
+            <a href="{{ url_for('main.advice') }}" class="cube-link full-width">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span data-i18n="adv">Advice</span>
+            </a>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

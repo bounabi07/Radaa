@@ -5,19 +5,249 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radaa - Secure Access</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(180deg,
+                    rgba(10, 14, 26, 0.75) 0%,
+                    rgba(10, 14, 26, 0.55) 50%,
+                    rgba(10, 14, 26, 0.80) 100%),
+                url("{{ url_for('static', filename='images/agadire-log.avif') }}")
+                center/cover no-repeat fixed;
+        }
+
+        .city-glow {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(0deg, rgba(251, 146, 60, 0.06) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-height: 80vh;
+        }
+
+        .flash-msg {
+            width: 100%;
+            max-width: 420px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 16px;
+            font-weight: 500;
+            animation: fadeInDown 0.4s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .flash-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+        .flash-success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #4ade80;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px 36px;
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(56, 189, 248, 0.1) inset;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .auth-logo i {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .auth-logo h2 {
+            background: linear-gradient(135deg, #ffffff, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 8px 0 4px;
+        }
+        .auth-logo p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .auth-tab.active {
+            background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(129,140,248,0.2));
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .auth-form { display: flex; flex-direction: column; gap: 16px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .form-group label i { color: #38bdf8; }
+
+        .form-group input {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #f1f5f9;
+            font-size: 0.95rem;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+        .form-group input::placeholder { color: #475569; }
+
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            border: none;
+            border-radius: 12px;
+            color: #0a0e1a;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.35);
+        }
+
+        .auth-divider {
+            text-align: center;
+            color: #334155;
+            font-size: 0.85rem;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        .switch-page {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+        .switch-page a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .switch-page a:hover { text-decoration: underline; }
+
+        .about-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .about-link a {
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .about-link a:hover { color: #38bdf8; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    {% if error %}
-<div style="background:#ef4444; color:white; padding:10px; text-align:center; margin:10px; border-radius:8px;">
-    <i class="fa-solid fa-circle-xmark"></i> {{ error }}
-</div>
-{% endif %}
-{% if success %}
-<div style="background:#22c55e; color:white; padding:10px; text-align:center; margin:10px; border-radius:8px;">
-    <i class="fa-solid fa-circle-check"></i> {{ success }}
-</div>
-{% endif %}
+
+    <div class="hero-bg"></div>
+    <div class="city-glow"></div>
+
     <div class="lang-menu-container">
         <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
         <div class="lang-dropdown" id="langDropdown">
@@ -27,51 +257,116 @@
             <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
         </div>
     </div>
-    <header>
-        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
-        <hr>
-    </header>
 
-    <nav>
-        <a href="{{ url_for('main.about') }}">
-        <i class="fa-solid fa-info-circle"></i> <span data-i18n="about">About</span>
-    </a>
-    </nav>
+    <div class="auth-wrapper">
 
-    <div id="loginContainer">
-        <fieldset>
-            <legend data-i18n="login"><i class="fa-solid fa-right-to-bracket"></i> Secure Login</legend>
-            <form method="post" action="{{ url_for('main.login') }}" onsubmit="return handleLogin(event)">
-                <label for="loginEmail" data-i18n="email"><i class="fa-solid fa-at"></i> Email:</label>
-                <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
-                
-                <label for="loginPassword" data-i18n="password"><i class="fa-solid fa-lock"></i> Password:</label>
-                <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
-                
-                <button type="submit" id="loginBtn" data-i18n="login_btn"><i class="fa-solid fa-unlock-keyhole"></i> Login to Terminal</button>
-            </form>
-        </fieldset>
-        <p class="switch-page">New to the platform? <a href="{{ url_for('main.login') }}" onclick="showRegister(event)">Create Secure Account</a></p>
+        {% if error %}
+        <div class="flash-msg flash-error">
+            <i class="fa-solid fa-circle-xmark"></i> {{ error }}
+        </div>
+        {% endif %}
+        {% if success %}
+        <div class="flash-msg flash-success">
+            <i class="fa-solid fa-circle-check"></i> {{ success }}
+        </div>
+        {% endif %}
+
+        <div class="auth-card">
+
+            <div class="auth-logo">
+               
+                <h2 data-i18n="welcome">Radaa</h2>
+            </div>
+
+           
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin" onclick="showLogin(event)">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span data-i18n="login"> Login</span>
+                </button>
+                <button class="auth-tab" id="tabRegister" onclick="showRegister(event)">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span data-i18n="register"> Register</span>
+                </button>
+            </div>
+
+            <div id="loginContainer">
+                <form class="auth-form" method="post" action="{{ url_for('main.login') }}" onsubmit="return handleLogin(event)">
+                    <div class="form-group">
+                        <label data-i18n="email"><i class="fa-solid fa-at"></i> Email</label>
+                        <input type="email" name="email" placeholder="name@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" name="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        <i class="fa-solid fa-unlock-keyhole"></i>
+                        <span data-i18n="login_btn"> Login</span>
+                    </button>
+                </form>
+                <div class="auth-divider">or</div>
+                <p class="switch-page">
+                    New here? <a href="#" onclick="showRegister(event)">Create account</a>
+                </p>
+            </div>
+
+            <div id="registerContainer" style="display:none;">
+                <form class="auth-form" action="{{ url_for('main.login') }}" method="post" onsubmit="return handleRegister(event)">
+                    <div class="form-group">
+                        <label data-i18n="username"><i class="fa-solid fa-user"></i> Username</label>
+                        <input type="text" name="username" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="email"><i class="fa-solid fa-at"></i> Email</label>
+                        <input type="email" name="email" placeholder="name@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" name="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        <i class="fa-solid fa-key"></i>
+                        <span data-i18n="create_account"> Create Account</span>
+                    </button>
+                </form>
+                <div class="auth-divider">or</div>
+                <p class="switch-page">
+                    Already have an account? <a href="#" onclick="showLogin(event)">Login</a>
+                </p>
+            </div>
+
+        </div>
+
+        <div class="about-link">
+            <a href="{{ url_for('main.about') }}">
+                <i class="fa-solid fa-info-circle"></i>
+                <span data-i18n="about"> About Radaa</span>
+            </a>
+        </div>
+
     </div>
 
-    <div id="registerContainer" style="display: none;">
-        <fieldset>
-            <legend data-i18n="register"><i class="fa-solid fa-user-plus"></i> Create Secure Account</legend>
-            <form action="{{ url_for('main.login') }}" method="post" onsubmit="return handleRegister(event)">
-                <label for="username" data-i18n="username"><i class="fa-solid fa-user"></i> Username:</label>
-                <input type="text" id="username" name="username" placeholder="Enter username" required>
-                
-                <label for="regPassword" data-i18n="password"><i class="fa-solid fa-lock"></i> Password:</label>
-                <input type="password" id="regPassword" name="password" placeholder="Enter strong password" required>
-                
-                <label for="regEmail" data-i18n="email"><i class="fa-solid fa-at"></i> Email Address:</label>
-                <input type="email" id="regEmail" name="email" placeholder="name@example.com" required>
-                
-                <button type="submit" id="submitBtn" data-i18n="create_account"><i class="fa-solid fa-key"></i> Create Account</button>
-            </form>
-        </fieldset>
-        <p class="switch-page">Already secured? <a href="{{ url_for('main.login') }}" onclick="showLogin(event)">Access Terminal (Login)</a></p>
-    </div>
+    <script>
+        function showRegister(event) {
+            if (event) event.preventDefault();
+            document.getElementById("loginContainer").style.display = "none";
+            document.getElementById("registerContainer").style.display = "block";
+            document.getElementById("tabLogin").classList.remove("active");
+            document.getElementById("tabRegister").classList.add("active");
+        }
+
+        function showLogin(event) {
+            if (event) event.preventDefault();
+            document.getElementById("registerContainer").style.display = "none";
+            document.getElementById("loginContainer").style.display = "block";
+            document.getElementById("tabRegister").classList.remove("active");
+            document.getElementById("tabLogin").classList.add("active");
+        }
+
+        function handleLogin(event) { return true; }
+        function handleRegister(event) { return true; }
+    </script>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+                .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(180deg,
+                    rgba(10, 14, 26, 0.40) 0%,
+                    rgba(10, 14, 26, 0.45) 50%,
+                    rgba(10, 14, 26, 0.70) 100%),
+                url('{{ url_for('static', filename='images/files.jpg')}}')
+                center/cover no-repeat fixed;
+        }
         .files-container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
         .info-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .info-box h2 { color: #38bdf8; margin-bottom: 8px; }
@@ -92,7 +104,7 @@
     </style>
 </head>
 <body>
-
+    <div class="hero-bg"></div>
     <div class="lang-menu-container">
         <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
         <div class="lang-dropdown" id="langDropdown">
@@ -245,75 +257,74 @@
             document.getElementById("fileInput").value = "";
         }
 
-        async function scanFile() {
-            if (!currentFile) return;
+        
 
-            const btn = document.getElementById("scanBtn");
-            const loading = document.getElementById("loadingDots");
-            const resultBox = document.getElementById("resultBox");
-            const currentLang = localStorage.getItem("selectedLang") || "en";
+    async function scanFile() {
+    if (!currentFile) return;
 
-            btn.disabled = true;
-            loading.style.display = "block";
-            resultBox.style.display = "none";
+    const btn = document.getElementById("scanBtn");
+    const loading = document.getElementById("loadingDots");
+    const resultBox = document.getElementById("resultBox");
+    const currentLang = localStorage.getItem("selectedLang") || "en";
 
-            const ext = "." + currentFile.name.split(".").pop().toLowerCase();
-            const fileName = currentFile.name.toLowerCase();
+    btn.disabled = true;
+    loading.style.display = "block";
+    resultBox.style.display = "none";
 
-           
-            let extRisk = "safe";
-            if (dangerousExtensions.includes(ext)) extRisk = "danger";
-            else if (suspiciousExtensions.includes(ext)) extRisk = "warning";
+    const ext = "." + currentFile.name.split(".").pop().toLowerCase();
+    const fileName = currentFile.name.toLowerCase();
 
-            
-            const nameKeywords = maliciousKeywordsInName.filter(kw => fileName.includes(kw));
+   
+    let extRisk = "safe";
+    if (dangerousExtensions.includes(ext)) extRisk = "danger";
+    else if (suspiciousExtensions.includes(ext)) extRisk = "warning";
+    const nameKeywords = maliciousKeywordsInName.filter(kw => fileName.includes(kw));
 
-            
-            let contentKeywords = [];
-            let fileContent = "";
-            try {
-                fileContent = await readFileContent(currentFile);
-                contentKeywords = maliciousKeywordsInContent.filter(kw =>
-                    fileContent.toLowerCase().includes(kw.toLowerCase())
-                );
-            } catch (e) { fileContent = ""; }
+   
+    let fileBase64 = "";
+    try {
+        fileBase64 = await readFileAsBase64(currentFile);
+    } catch (e) { fileBase64 = ""; }
 
-            
-            let aiResult = null;
-            try {
-                const response = await fetch('/ai_scan_file', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        filename: currentFile.name,
-                        extension: ext,
-                        size: currentFile.size,
-                        content_preview: fileContent.substring(0, 500),
-                        lang: currentLang
-                    })
-                });
-                aiResult = await response.json();
-            } catch (e) { aiResult = null; }
+    
+    let aiResult = null;
+    try {
+        const response = await fetch('/ai_scan_file', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                filename: currentFile.name,
+                extension: ext,
+                size: currentFile.size,
+                file_data: fileBase64,
+                lang: currentLang
+            })
+        });
+        aiResult = await response.json();
+    } catch (e) { aiResult = null; }
 
-           
-            showResult(extRisk, nameKeywords, contentKeywords, aiResult, ext);
+    showResult(extRisk, nameKeywords, [], aiResult, ext);
 
-           
-            const isSafe = aiResult ? aiResult.verdict === "SAFE" : (extRisk === "safe" && nameKeywords.length === 0 && contentKeywords.length === 0);
-            await saveFileLog(currentFile.name, isSafe);
+    const isSafe = aiResult ? aiResult.verdict === "SAFE" : (extRisk === "safe" && nameKeywords.length === 0);
+    await saveFileLog(currentFile.name, isSafe);
 
-            loading.style.display = "none";
-            btn.disabled = false;
-        }
+    loading.style.display = "none";
+    btn.disabled = false;
+}
 
-        function readFileContent(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = e => resolve(e.target.result);
-                reader.onerror = reject;
-                reader.readAsText(file);
-            });
-        }
+
+function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const base64 = e.target.result.split(',')[1]; 
+            resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+  
 
         function showResult(extRisk, nameKw, contentKw, ai, ext) {
             const resultBox = document.getElementById("resultBox");

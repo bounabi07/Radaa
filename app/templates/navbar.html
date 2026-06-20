@@ -10,7 +10,7 @@
         </span>
       
 <a href="{{ url_for('main.logout') }}" style="color: #ef4444;">
-    <i class="fa-solid fa-power-off"></i> <span data-i18n="logout">Logout</span>
+    <i class="fa-solid fa-power-off" style="color: #ef4444;"></i> <span data-i18n="logout">Logout</span>
 </a>
     {% else %}
         {% if request.endpoint != 'main.login' %}

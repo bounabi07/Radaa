@@ -3,9 +3,587 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Radaa - Security Advice</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                linear-gradient(180deg,
+                    rgba(10, 14, 26, 0.50) 0%,
+                    rgba(10, 14, 26, 0.60) 50%,
+                    rgba(10, 14, 26, 0.65) 100%),
+                url('{{ url_for('static', filename='images/advice.jpg') }}')
+                center/cover no-repeat fixed;
+        }
+
+        .advice-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px 60px;
+        }
+
+       
+        .page-header {
+            text-align: center;
+            padding: 20px 0 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+       
+        .page-header h2 {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 8px 0;
+        }
+        .page-header p {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight:600;
+        }
+
+       
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .cat-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 14px;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .cat-btn i {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cat-btn:hover, .cat-btn.active {
+            border-color: #38bdf8;
+            color: #f1f5f9;
+            background: rgba(56, 189, 248, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.2);
+        }
+        .cat-btn.active {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+        }
+
+      
+        .advice-section {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+        .advice-section.active { display: block; }
+
+        .advice-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding: 20px 24px;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            backdrop-filter: blur(16px);
+            border-radius: 18px;
+        }
+        .advice-header-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #0a0e1a;
+            flex-shrink: 0;
+        }
+        .advice-header-text h3 {
+            color: #f1f5f9;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 0 0 4px;
+        }
+        .advice-header-text p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .advice-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .advice-card {
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            backdrop-filter: blur(14px);
+            border-radius: 16px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.3s;
+        }
+        .advice-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateX(5px);
+            background: rgba(56, 189, 248, 0.06);
+        }
+        .advice-card.danger { border-left: 3px solid #ef4444; }
+        .advice-card.warning { border-left: 3px solid #f59e0b; }
+        .advice-card.safe { border-left: 3px solid #22c55e; }
+
+        .advice-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .advice-icon.danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .advice-icon.warning { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .advice-icon.safe { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+
+        .advice-content h4 {
+            color: #f1f5f9;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 0 0 6px;
+        }
+        .advice-content p {
+            color: #94a9c7;
+            font-size: 0.875rem;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+       
+        .welcome-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px dashed rgba(56, 189, 248, 0.25);
+            backdrop-filter: blur(14px);
+            border-radius: 24px;
+            animation: fadeInUp 0.8s ease;
+        }
+        .welcome-state i {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .welcome-state h3 { color: #f1f5f9; margin: 0 0 10px; }
+        .welcome-state p { color: #475569; font-size: 0.9rem; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    
+
+    <div class="hero-bg"></div>
+
+    <div class="lang-menu-container">
+        <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <a href="javascript:void(0)" onclick="changeLanguage('ar')">العربية (AR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('en')">English (EN)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('fr')">Français (FR)</a>
+            <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
+        </div>
+    </div>
+
+    <header>
+        <h1 data-i18n="welcome"><i class="fa-solid fa-shield-halved"></i> welcome to Radaa</h1>
+        <hr>
+    </header>
+
+    {% include 'navbar.html' %}
+
+    <div class="advice-container">
+
+        <div class="page-header">
+            <h2><i class="fa-solid fa-shield-halved"></i> <span data-i18n="adv_title">Stay Safe Online</span></h2>
+            <p data-i18n="adv_subtitle">Choose a category to get personalized security tips</p>
+        </div>
+
+       
+        <div class="categories-grid">
+            <button class="cat-btn" onclick="showAdvice('apps')">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <span data-i18n="adv_cat_apps">Apps & Downloads</span>
+            </button>
+            <button class="cat-btn" onclick="showAdvice('passwords')">
+                <i class="fa-solid fa-key"></i>
+                <span data-i18n="adv_cat_passwords">Passwords</span>
+            </button>
+            <button class="cat-btn" onclick="showAdvice('phishing')">
+                <i class="fa-solid fa-fish"></i>
+                <span data-i18n="adv_cat_phishing">Phishing & Scams</span>
+            </button>
+            <button class="cat-btn" onclick="showAdvice('social')">
+                <i class="fa-solid fa-users"></i>
+                <span data-i18n="adv_cat_social">Social Media</span>
+            </button>
+            <button class="cat-btn" onclick="showAdvice('wifi')">
+                <i class="fa-solid fa-wifi"></i>
+                <span data-i18n="adv_cat_wifi">WiFi & Networks</span>
+            </button>
+            <button class="cat-btn" onclick="showAdvice('email')">
+                <i class="fa-solid fa-at"></i>
+                <span data-i18n="adv_cat_email">Email Security</span>
+            </button>
+        </div>
+
+       
+        <div class="welcome-state" id="welcomeState">
+            <i class="fa-solid fa-hand-pointer"></i>
+            <h3 data-i18n="adv_welcome_title">Choose a Category</h3>
+            <p data-i18n="adv_welcome_desc">Select one of the categories above to get security tips</p>
+        </div>
+
+        
+        <div class="advice-section" id="advice-apps">
+            <div class="advice-header">
+                <div class="advice-header-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                <div class="advice-header-text">
+                    <h3 data-i18n="adv_cat_apps">Apps & Downloads</h3>
+                    <p data-i18n="adv_cat_apps_desc">Stay safe when downloading and using applications</p>
+                </div>
+            </div>
+            <div class="advice-cards">
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_app_download">Download only from official stores</h4>
+                        <p data-i18n="adv_app_download_desc">Always use Google Play or App Store. Avoid third-party APK websites — they often contain malware hidden inside apps.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-eye"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_app_permissions">Check app permissions</h4>
+                        <p data-i18n="adv_app_permissions_desc">A flashlight app doesn't need access to your contacts or camera. Review permissions before installing any app.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-star"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_app_reviews">Check reviews and ratings</h4>
+                        <p data-i18n="adv_app_reviews_desc">Low rating or few reviews on a new app can be a red flag. Read recent reviews carefully before downloading.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-rotate"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_app_updates">Keep apps updated</h4>
+                        <p data-i18n="adv_app_updates_desc">Updates patch security vulnerabilities. Enable automatic updates to stay protected against known exploits.</p>
+                    </div>
+                </div>
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-ban"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_app_cracked">Avoid cracked or modded apps</h4>
+                        <p data-i18n="adv_app_cracked_desc">Modified apps (cracked versions) bypass security checks and may steal your data, passwords, or banking information.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="advice-section" id="advice-passwords">
+            <div class="advice-header">
+                <div class="advice-header-icon"><i class="fa-solid fa-key"></i></div>
+                <div class="advice-header-text">
+                    <h3 data-i18n="adv_passwords_title">Password Security</h3>
+                    <p data-i18n="adv_passwords_desc">Protect your accounts with strong, unique passwords</p>
+                </div>
+            </div>
+            <div class="advice-cards">
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_password_strong">Use a strong password</h4>
+                        <p data-i18n="adv_password_strong_desc">Use at least 12 characters mixing uppercase, lowercase, numbers, and symbols. Avoid names, birthdays, or common words.</p>
+                    </div>
+                </div>
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-copy"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_password_reuse">Never reuse passwords</h4>
+                        <p data-i18n="adv_password_reuse_desc">If one account is breached, attackers try the same password on all your accounts. Use a unique password for each site.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-vault"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_password_manager">Use a password manager</h4>
+                        <p data-i18n="adv_password_manager_desc">Tools like Bitwarden or 1Password generate and store complex passwords securely so you only need to remember one.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_2fa">Enable two-factor authentication (2FA)</h4>
+                        <p data-i18n="adv_2fa_desc">Even if your password is stolen, 2FA blocks attackers. Enable it on email, banking, and social media accounts.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-rotate"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_password_change">Change passwords after a breach</h4>
+                        <p data-i18n="adv_password_change_desc">Use Radaa's email scanner to check if your email appeared in a data breach, then immediately change those passwords.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="advice-section" id="advice-phishing">
+            <div class="advice-header">
+                <div class="advice-header-icon"><i class="fa-solid fa-fish"></i></div>
+                <div class="advice-header-text">
+                    <h3 data-i18n="adv_phishing_title">Phishing & Scams</h3>
+                    <p data-i18n="adv_phishing_desc">Recognize and avoid online fraud attempts</p>
+                </div>
+            </div>
+            <div class="advice-cards">
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-link"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_phishing_links">Don't click suspicious links</h4>
+                        <p data-i18n="adv_phishing_links_desc">Hover over links before clicking to see the real URL. If it looks strange or uses URL shorteners, use Radaa's link scanner first.</p>
+                    </div>
+                </div>
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-clock"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_phishing_urgency">Beware of urgency tricks</h4>
+                        <p data-i18n="adv_phishing_urgency_desc">"Your account will be suspended in 24 hours!" is a classic pressure tactic. Legitimate companies never rush you like this.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-gift"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_phishing_scams">If it sounds too good to be true...</h4>
+                        <p data-i18n="adv_phishing_scams_desc">"You won $5000!" or "Free iPhone!" are scam traps. Never enter personal info on prize claim pages.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-building"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_phishing_sender">Verify sender identity</h4>
+                        <p data-i18n="adv_phishing_sender_desc">Scammers impersonate Netflix, PayPal, or your bank. Always check the sender's email domain carefully for slight misspellings.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_phishing_analysis">Use Radaa to analyze suspicious messages</h4>
+                        <p data-i18n="adv_phishing_analysis_desc">Copy any suspicious SMS or email and paste it in Radaa's message detector for instant AI-powered analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="advice-section" id="advice-social">
+            <div class="advice-header">
+                <div class="advice-header-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="advice-header-text">
+                    <h3 data-i18n="adv_social_header">Social Media Safety</h3>
+                    <p data-i18n="adv_social_desc">Protect your privacy on social platforms</p>
+                </div>
+            </div>
+            <div class="advice-cards">
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-user-secret"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_social_limit">Limit personal information</h4>
+                        <p data-i18n="adv_social_limit_desc">Don't share your phone number, address, or ID publicly. Scammers use this info to target and manipulate you.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_social_friend_requests">Be cautious with friend requests</h4>
+                        <p data-i18n="adv_social_friend_requests_desc">Fake accounts are used to gather information or spread scams. Verify identity before accepting requests from strangers.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-lock"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_social_privacy">Review privacy settings</h4>
+                        <p data-i18n="adv_social_privacy_desc">Set your profile to private. Regularly check who can see your posts, location, and personal information.</p>
+                    </div>
+                </div>
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_social_money_requests">Beware of money transfer requests</h4>
+                        <p data-i18n="adv_social_money_requests_desc">If a "friend" suddenly asks for money via DM, verify by calling them directly. Account hacking for money fraud is very common.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_social_login_alerts">Enable login alerts</h4>
+                        <p data-i18n="adv_social_login_alerts_desc">Turn on notifications for new logins on all your accounts. You'll be instantly alerted if someone else accesses your profile.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="advice-section" id="advice-wifi">
+            <div class="advice-header">
+                <div class="advice-header-icon"><i class="fa-solid fa-wifi"></i></div>
+                <div class="advice-header-text">
+                    <h3 data-i18n="adv_wifi_header">WiFi & Network Security</h3>
+                    <p data-i18n="adv_wifi_desc">Stay safe on public and private networks</p>
+                </div>
+            </div>
+            <div class="advice-cards">
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-store"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_wifi_avoid">Avoid public WiFi for sensitive tasks</h4>
+                        <p data-i18n="adv_wifi_avoid_desc">Never do online banking or enter passwords on café or airport WiFi. Attackers can intercept unencrypted traffic easily.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_wifi_vpn">Use a VPN on public networks</h4>
+                        <p data-i18n="adv_wifi_vpn_desc">A VPN encrypts your connection and hides your activity from attackers on the same network. Use Proton VPN (free tier available).</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-tower-broadcast"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_wifi_verify">Verify the network name</h4>
+                        <p data-i18n="adv_wifi_verify_desc">Attackers create fake hotspots named "Free_Airport_WiFi". Always confirm the exact network name with staff before connecting.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-house-signal"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_wifi_secure">Secure your home router</h4>
+                        <p data-i18n="adv_wifi_secure_desc">Change the default router password. Use WPA3 or WPA2 encryption. Disable WPS which is vulnerable to brute force attacks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="advice-section" id="advice-email">
+            <div class="advice-header">
+                <div class="advice-header-icon"><i class="fa-solid fa-at"></i></div>
+                <div class="advice-header-text">
+                    <h3 data-i18n="adv_email_header">Email Security</h3>
+                    <p data-i18n="adv_email_desc">Protect your inbox from threats and spam</p>
+                </div>
+            </div>
+            <div class="advice-cards">
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-paperclip"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_email_attachments">Never open unexpected attachments</h4>
+                        <p data-i18n="adv_email_attachments_desc">Malware is often distributed via email attachments (.exe, .zip, .docx with macros). Use Radaa's file scanner before opening.</p>
+                    </div>
+                </div>
+                <div class="advice-card danger">
+                    <div class="advice-icon danger"><i class="fa-solid fa-at"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_email_sender">Check the sender's email address</h4>
+                        <p data-i18n="adv_email_sender_desc">Scammers use addresses like "support@paypa1.com" (with a 1 instead of l). Always check carefully for subtle misspellings.</p>
+                    </div>
+                </div>
+                <div class="advice-card warning">
+                    <div class="advice-icon warning"><i class="fa-solid fa-envelope-open"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_email_unsubscribe">Don't unsubscribe from spam blindly</h4>
+                        <p data-i18n="adv_email_unsubscribe_desc">Clicking "unsubscribe" on a spam email confirms your address is active. Just mark it as spam and delete it instead.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-database"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_email_breached">Check if your email was breached</h4>
+                        <p data-i18n="adv_email_breached_desc">Use Radaa's email scanner to see if your address appeared in known data breaches and take action immediately if it did.</p>
+                    </div>
+                </div>
+                <div class="advice-card safe">
+                    <div class="advice-icon safe"><i class="fa-solid fa-filter"></i></div>
+                    <div class="advice-content">
+                        <h4 data-i18n="adv_email_filters">Use email filters and spam settings</h4>
+                        <p data-i18n="adv_email_filters_desc">Enable spam filters in your email client. Gmail and Outlook have built-in protection — make sure it's activated.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showAdvice(category) {
+          
+            document.querySelectorAll('.advice-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('welcomeState').style.display = 'none';
+
+            document.getElementById('advice-' + category).classList.add('active');
+
+            event.currentTarget.classList.add('active');
+
+            setTimeout(() => {
+                document.getElementById('advice-' + category).scrollIntoView({
+                    behavior: 'smooth', block: 'start'
+                });
+            }, 100);
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
