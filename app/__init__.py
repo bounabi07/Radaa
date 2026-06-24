@@ -10,10 +10,12 @@ def create_app(config_name='default'):
 
     db.init_app(app)
 
-    from .routes import main
+    from .routes import main, init_oauth
     app.register_blueprint(main)
 
-   
+    
+    init_oauth(app)
+
     with app.app_context():
         db.create_all()
 

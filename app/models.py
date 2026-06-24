@@ -7,7 +7,9 @@ class User(db.Model):
     username = db.Column(db.String(100), nullable=False)
     email    = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    profile_image = db.Column(db.String(2048), nullable=False, default='default.jpg')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_verified = db.Column(db.Boolean, default=False)
 
     messages = db.relationship('MessageLog', backref='user', lazy=True)
     links    = db.relationship('LinkLog',    backref='user', lazy=True)
@@ -39,3 +41,13 @@ class FileLog(db.Model):
     filename   = db.Column(db.String(300), nullable=False)
     is_safe    = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+
+class EmailLog(db.Model):
+    __tablename__ = 'emails'
+    id         = db.Column(db.Integer, primary_key=True)
+    user_id    = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    content    = db.Column(db.Text, nullable=False)
+    is_spam    = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)    

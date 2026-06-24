@@ -1,13 +1,15 @@
 const translations = {
     en: {
         dir: "ltr", welcome: "welcome to Radaa", logout: "Logout", analyze_btn: "Analyze Message",risk_score:"Risk Score",
+        forgot_title: "Forgot Password", forgot_desc: "Enter your email and we'll send you a link to reset your password.", forgot_email_placeholder: "Enter your registered email", forgot_send_btn: "Send Reset Link",
+        reset_title: "New Password", reset_new_password_placeholder: "New Password", reset_confirm_placeholder: "Confirm New Password", reset_update_btn: "Update Password",
         description: "Welcome to Radaa a platform that ensures you are safe from spam",
         home: "Home", about: "About", login: "Login", register: "Register", email: "Email :", password: "Password :", username: "Username :", login_btn: "Login to Terminal", create_account: "Create Account",
-        msg: "Messages", lnk: "Links", eml: "Email", fil: "files", adv: "Advice",
+        msg: "Messages", lnk: "Links", eml: "Email", fil: "files", adv: "Advice",password_updated_success: "Your password has been updated successfully!",
         msg_title: "Spam Message Detector",risk_level:"Risk Level",breaches_found:"Breaches Found",
         msg_desc: "Paste any suspicious message, SMS, or email below. Our security analyzer will scan the text for malicious patterns, phishing links, and fraud indicators.",
         scan_title: "Terminal Analyzer", label_text: "Suspicious Text / Message:",
-        detected_words: "Detected Red-Flags:",
+        detected_words: "Detected Red-Flags:",forgot_passw:"Forgot Password?",dashboard: "Dashboard",
         safe_title: "🛡️ SAFE: No Threat Detected", safe_desc: "The message looks clean. However, always remain cautious with unknown senders.",
         spam_title: "⚠️ ALERT: Spam / Phishing Detected", spam_desc: "High risk! This message contains fraudulent keywords often used in social engineering scams.",
         about_title: "About Radaa", about_desc: "Radaa is a cybersecurity platform designed to protect users from spam, phishing, malicious links, and suspicious files.",
@@ -21,7 +23,7 @@ const translations = {
         email_title: "Email Security Scanner", email_desc: "Check if your email has been leaked in a data breach and verify its validity.",
         email_legend: "Email Analyzer", email_label: "Enter Email Address:", email_scan_btn: "Scan",
         email_loading: "Scanning email...", email_leak_title: "Data Breach Check", email_valid_title: "Email Validation",
-        adv: "Advice",adv_email_desc: "Protect your inbox from threats and spam",
+        adv: "Advice",adv_email_desc: "Protect your inbox from threats and spam",account_updated_success: "Account updated successfully!",
         adv_title: "Stay Safe Online", adv_subtitle: "Choose a category to get personalized security tips",
         adv_welcome_title: "Choose a Category", adv_welcome_desc: "Select one of the categories above to get security tips",
         adv_cat_apps: "Apps & Downloads", adv_cat_passwords: "Passwords", adv_cat_phishing: "Phishing & Scams",
@@ -43,17 +45,24 @@ const translations = {
         adv_wifi_avoid: "Avoid public WiFi for sensitive tasks", adv_wifi_avoid_desc: "Never do online banking or enter passwords on café or airport WiFi. Attackers can intercept unencrypted traffic easily.", adv_wifi_vpn: "Use a VPN on public networks", adv_wifi_vpn_desc: "A VPN encrypts your connection and hides your activity from attackers on the same network. Use Proton VPN (free tier available).",
         adv_email_header: "Email Security", adv_email_unsubscribe: "Don't unsubscribe from spam blindly", adv_email_unsubscribe_desc: "Clicking \"unsubscribe\" on a spam email confirms your address is active. Just mark it as spam and delete it instead.", adv_email_breached: "Check if your email was breached", 
         adv_email_breached_desc: "Use Radaa's email scanner to see if your address appeared in known data breaches and take action immediately if it did.", adv_email_filters: "Use email filters and spam settings", adv_email_filters_desc: "Enable spam filters in your email client. Gmail and Outlook have built-in protection — make sure it's activated.",
+        default_user: "User", back_home: "Back to Home", stats_records: "Stats & Records", account_settings: "Account Settings", scanned_links: "Scanned Links", scanned_files: "Scanned Files",
+        scanned_messages: "Scanned Messages", scanned_emails: "Scanned Emails", detected_threats: "Detected Threats", recent_links: "Recent Scanned Links", type: "Type", target_link: "Target Link", security_status: "Security Status",
+        link: "Link", safe: "Safe", harmful_suspicious: "Harmful / Suspicious", no_links_recorded: "No scanned links recorded yet.", recent_files: "Recent Scanned Files", file_name: "File Name", danger: "Danger",
+        no_files_scanned: "No files scanned yet.", recent_messages: "Recent Scanned Messages", message_content: "Message Content", message_status: "Message Status", spam_fraud: "Spam / Fraud", no_messages_scanned: "No messages scanned yet.", recent_emails: "Recent Scanned Emails",
+        email_content: "Email Content", phishing_email: "Phishing Email", no_emails_scanned: "No emails scanned yet.", personal_settings: "Personal Account Settings", change_image: "Change Image", new_username: "New Username", email_cannot_edit: "Email (Cannot be modified)", save_changes: "Save Changes",
     },
     ar: {
         dir: "rtl", welcome: "مرحباً بك في ردع", analyse_message: "فحص الرسالة",risk_score:"مستوى الخطورة",
-        description: "مرحباً بك في ردع، المنصة التي تضمن حمايتك من الرسائل المزعجة (Spam).",
+        forgot_title: "نسيت كلمة المرور؟", forgot_desc: "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.", forgot_email_placeholder: "أدخل بريدك المسجل", forgot_send_btn: "إرسال رابط إعادة التعيين",
+        reset_title: "كلمة مرور جديدة", reset_new_password_placeholder: "كلمة مرور جديدة", reset_confirm_placeholder: "تأكيد كلمة المرور الجديدة", reset_update_btn: "تحديث كلمة المرور",
+        description: "مرحباً بك في ردع، المنصة التي تضمن حمايتك من الرسائل المزعجة (Spam).",dashboard:"لوحة التحكم",
         home: "الرئيسية", about: "من نحن", register: "تسجيل", email: "البريد الإلكتروني :", password: "كلمة المرور :", username: "اسم المستخدم :", login_btn: "تسجيل الدخول إلى الردع", create_account: "إنشاء حساب",
-        msg: "الرسائل", lnk: "الروابط", eml: "البريد الإلكتروني", fil: "الملفات", adv: "نصيحة",
+        msg: "الرسائل", lnk: "الروابط", eml: "البريد الإلكتروني", fil: "الملفات", adv: "نصيحة",password_updated_success: "تم تحديث كلمة المرور بنجاح!",
         logout: "تسجيل الخروج", login: "تسجيل الدخول",risk_level:"مستوى الخطر",breaches_found:"التسريبات المكتشفة",
         analyze_btn: "تحليل الرسالة", detect_title: "كاشف التهديدات بالذكاء الاصطناعي", detect_desc: "الصق أي محتوى مشبوه. الذكاء الاصطناعي سيحلله بعمق.", detect_legend: "محلل الذكاء الاصطناعي", detect_label: "المحتوى المشبوه:", detect_btn: "تحليل بالذكاء الاصطناعي", detect_loading: "الذكاء الاصطناعي يحلل...", detect_risk: "مستوى الخطر:",
-        msg_title: "كاشف الرسائل المزعجة والاحتيالية",
+        msg_title: "كاشف الرسائل المزعجة والاحتيالية",forgot_passw:"نسيت كلمة المرور ؟",
         msg_desc: "قم بلصق أي رسالة مشبوهة، رسالة نصية قصيرة (SMS)، أو بريد إلكتروني أدناه. سيتولى محلل الأمان في منصة ردع فحص النص لكشف الأنماط الخبيثة، روابط التصيد، ومؤشرات الاحتيال.",
-        scan_title: "محلل البيانات الآمن", label_text: "النص أو الرسالة المشبوهة:",
+        scan_title: "محلل البيانات الآمن", label_text: "النص أو الرسالة المشبوهة:",account_updated_success: "تم تحديث معلومات الحساب بنجاح!",
         detected_words: "الكلمات الدلالية المكتشفة (خطورة):",email_summary: "ملخص الأمان", email_leak_check: "فحص التسريبات", email_validation: "صلاحية البريد الإلكتروني", email_exposed: "البيانات المكشوفة", email_recommendations: "التوصيات",
         safe_title: "🛡️ آمن: لم يتم العثور على تهديد", safe_desc: "تبدو الرسالة نظيفة وآمنة. ومع ذلك، يرجى الحذر دائماً من المرسلين المجهولين.",
         spam_title: "⚠️ تحذير: تم اكتشاف رسالة احتيالية (Spam)", spam_desc: "مستوى الخطورة عالٍ! تحتوي هذه الرسالة على كلمات دلالية مضللة تُستخدم عادةً في عمليات النصب والهندسة الاجتماعية.",
@@ -88,17 +97,24 @@ const translations = {
         adv_social_money_requests_desc: "إذا طلب \"صديق\" فجأة أموالاً عبر الرسالة المباشرة، تحقق بالاتصال بهم مباشرة. اختراق الحساب لغش الأموال شائع جداً.", adv_social_login_alerts: "فعّل تنبيهات تسجيل الدخول", adv_social_login_alerts_desc: "فعّل الإخطارات لعمليات تسجيل دخول جديدة على جميع حساباتك. ستتم إعلامك على الفور إذا قام شخص آخر بالوصول إلى ملفك الشخصي.", adv_wifi_header: "أمان WiFi والشبكات", adv_wifi_desc: "ابقَ آمناً على الشبكات العامة والخاصة", adv_wifi_avoid: "تجنب WiFi العام للمهام الحساسة",
         adv_wifi_avoid_desc: "لا تقم أبداً بالعمليات المصرفية عبر الإنترنت أو إدخال كلمات المرور على WiFi في المقهى أو المطار. يمكن للمهاجمين اعتراض حركة المرور بسهولة.", adv_wifi_vpn: "استخدم VPN على الشبكات العامة", adv_wifi_vpn_desc: "يقوم VPN بتشفير الاتصال الخاص بك إخفاء نشاطك عن المهاجمين على نفس الشبكة. استخدم Proton VPN (الطبقة المجانية متاحة).", adv_email_header: "أمان البريد الإلكتروني", adv_email_unsubscribe: "لا تلغ الاشتراك من الرسائل المزعجة عشوائياً", adv_email_unsubscribe_desc: "النقر على 'إلغاء الاشتراك' على رسالة بريد إلكترونية مزعجة يؤكد أن عنوانك نشط. فقط قم بتصنيفها كرسالة مزعجة وحذفها بدلاً من ذلك.", 
         adv_email_breached: "تحقق مما إذا تم اختراق بريدك الإلكتروني", adv_email_breached_desc: "استخدم ماسح البريد الإلكتروني في ردع لمعرفة ما إذا كان عنوانك قد ظهر في عمليات اختراق معروفة واتخذ إجراءً فوراً إذا كان الأمر كذلك.", adv_email_filters: "استخدم مرشحات البريد الإلكتروني وإعدادات الرسائل المزعجة", adv_email_filters_desc: "فعّل مرشحات الرسائل المزعجة في عميل البريد الخاص بك. Gmail و Outlook لديهما حماية مدمجة — تأكد من تفعيلها.",
+        default_user: "مستخدم", back_home: "العودة للرئيسية", stats_records: "الإحصائيات والسجلات", account_settings: "إعدادات الحساب", scanned_links: "الروابط المفحوصة", scanned_files: "الملفات المفحوصة",
+        scanned_messages: "الرسائل المفحوصة", scanned_emails: "الإيميلات المفحوصة", detected_threats: "التهديدات المكتشفة", recent_links: "آخر روابط قمت بفحصها", type: "النوع", target_link: "الرابط المستهدف", security_status: "حالة الأمان",
+        link: "رابط", safe: "آمن", harmful_suspicious: "ضار / مشبوه", no_links_recorded: "لا توجد روابط مفحوصة مسجلة بعد.", recent_files: "آخر ملفات قمت بفحصها", file_name: "اسم الملف", danger: "خطر",
+        no_files_scanned: "لم تقم بفحص أي ملفات بعد.", recent_messages: "آخر رسائل قمت بفحصها", message_content: "محتوى الرسالة", message_status: "حالة الرسالة", spam_fraud: "سبام / احتيال", no_messages_scanned: "لم تقم بفحص أي رسائل بعد.", recent_emails: "آخر رسائل بريد إلكتروني قمت بفحصها",
+        email_content: "محتوى الإيميل", phishing_email: "بريد احتيالي", no_emails_scanned: "لم تقم بفحص أي بريد إلكتروني بعد.", personal_settings: "إعدادات الحساب الشخصي", change_image: "تغيير الصورة", new_username: "اسم المستخدم الجديد", email_cannot_edit: "البريد الإلكتروني (لا يمكن تعديله)", save_changes: "حفظ التغييرات",
     },
     fr: {
         dir: "ltr", welcome: "Bienvenue sur Radaa", logout: "Déconnexion", analyse_message: "Analyser le message",risk_score:"Niveau de risque",
+        forgot_title: "Mot de passe oublié", forgot_desc: "Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.", forgot_email_placeholder: "Entrez votre e-mail enregistré", forgot_send_btn: "Envoyer le lien de réinitialisation",
+        reset_title: "Nouveau mot de passe", reset_new_password_placeholder: "Nouveau mot de passe", reset_confirm_placeholder: "Confirmer le nouveau mot de passe", reset_update_btn: "Mettre à jour le mot de passe",
         description: "Bienvenue sur Radaa, une plateforme qui vous protège contre le spam.",
         home: "Accueil", about: "À propos", login: "Connexion", register: "Inscription", email: "Email :", password: "Mot de passe :", username: "Nom d'utilisateur :", login_btn: "Se connecter", create_account: "Créer un compte",
-        msg: "Messages", lnk: "Liens", eml: "Email", fil: "Fichiers", adv: "Conseils",
+        msg: "Messages", lnk: "Liens", eml: "Email", fil: "Fichiers", adv: "Conseils",password_updated_success: "Votre mot de passe a été mis à jour avec succès!",
         analyze_btn: "Analyser le message", detect_title: "Détecteur IA", detect_desc: "Collez tout contenu suspect. Notre IA l'analysera en profondeur.", detect_legend: "Analyseur IA", detect_label: "Contenu suspect:", detect_btn: "Analyser avec IA", detect_loading: "L'IA analyse...", detect_risk: "Niveau de risque:",
         msg_title: "Détecteur de Messages Spam",email_summary: "Résumé de Sécurité", email_leak_check: "Vérification des Fuites", email_validation: "Validation Email", email_exposed: "Données Exposées", email_recommendations: "Recommandations",
         msg_desc: "Collez tout message, SMS ou e-mail suspect ci-dessous. Notre analyseur de sécurité scannera le texte pour détecter les modèles malveillants, les liens de phishing et les indicateurs de fraude.",
-        scan_title: "Analyseur de Terminal", label_text: "Texte / Message Suspect:",
-        detected_words: "Indicateurs de Risque Détectés:",
+        scan_title: "Analyseur de Terminal", label_text: "Texte / Message Suspect:",account_updated_success: "Compte mis à jour avec succès!",
+        detected_words: "Indicateurs de Risque Détectés:",forgot_passw:"Mot de passe oublié ?",
         safe_title: "🛡️ SÉCURISÉ: Aucun Danger Détecté", safe_desc: "Le message semble propre. Restez néanmoins vigilant face aux expéditeurs inconnus.",
         spam_title: "⚠️ ALERTE: Spam / Phishing Détecté", spam_desc: "Risque élevé! Ce message contient des mots-clés frauduleux souvent utilisés dans les arnaques d'ingénierie sociale.",
         about_title: "À propos de Radaa", about_desc: "Radaa est une plateforme de cybersécurité conçue pour protéger les utilisateurs contre le spam, le phishing, les liens malveillants et les fichiers suspects.",
@@ -137,15 +153,22 @@ const translations = {
         adv_wifi_avoid_desc: "Ne faites jamais d'opérations bancaires en ligne ou n'entrez des mots de passe sur le WiFi du café ou de l'aéroport. Les attaquants peuvent intercepter facilement le trafic non chiffré.", adv_wifi_vpn: "Utilisez un VPN sur les réseaux publics", adv_wifi_vpn_desc: "Un VPN chiffre votre connexion et cache votre activité aux attaquants sur le même réseau. Utilisez Proton VPN (niveau gratuit disponible).", adv_email_header: "Sécurité des e-mails", adv_email_unsubscribe: "Ne vous désabonnez pas aveuglément des spams", 
         adv_email_unsubscribe_desc: "Cliquer sur \"Se désabonner\" sur un email spam confirme que votre adresse est active. Marquez-le simplement comme spam et supprimez-le à la place.", adv_email_breached: "Vérifiez si votre e-mail a été compromis", adv_email_breached_desc: "Utilisez le scanner de messagerie de Radaa pour voir si votre adresse a été compromise dans des violations de données connues et agissez immédiatement si c'est le cas.", 
         adv_email_filters: "Utilisez les filtres de messagerie et les paramètres de spam", adv_email_filters_desc: "Activez les filtres de spam dans votre client e-mail. Gmail et Outlook disposent d'une protection intégrée — assurez-vous qu'elle est activée.",
+        default_user: "Utilisateur", back_home: "Retour à l'accueil", stats_records: "Stats & Enregistrements", account_settings: "Paramètres du compte", scanned_links: "Liens analysés", scanned_files: "Fichiers analysés",
+        scanned_messages: "Messages analysés", scanned_emails: "E-mails analysés", detected_threats: "Menaces détectées", recent_links: "Derniers liens analysés", type: "Type", target_link: "Lien cible", security_status: "État de sécurité",
+        link: "Lien", safe: "Sécurisé", harmful_suspicious: "Nocif / Suspect", no_links_recorded: "Aucun lien analysé enregistré pour le moment.", recent_files: "Derniers fichiers analysés", file_name: "Nom du fichier", danger: "Danger",
+        no_files_scanned: "Aucun fichier analysé pour le moment.", recent_messages: "Derniers messages analysés", message_content: "Contenu du message", message_status: "État du message", spam_fraud: "Spam / Fraude", no_messages_scanned: "Aucun message analysé pour le moment.", recent_emails: "Derniers e-mails analysés",
+        email_content: "Contenu de l'e-mail", phishing_email: "E-mail de phishing", no_emails_scanned: "Aucun e-mail analysé pour le moment.", personal_settings: "Paramètres du compte personnel", change_image: "Changer l'image", new_username: "Nouveau nom d'utilisateur", email_cannot_edit: "E-mail (Ne peut pas être modifié)", save_changes: "Enregistrer les modifications",dashboard:"Tableau de bord",
     },
     ary: {
         dir: "rtl", welcome: "مرحبا بيك في ردع", logout: "خروج", analyze_btn: "حلل الميساج",risk_score:"مستوى الخطورة",risk_level:"درجة الخطر",breaches_found:"تم العثور على اختراقات",
-        description: "مرحبا بيك في ردع، المنصة لي كتحميك من الميساجات ديال النصب والسبام.",
+        forgot_title: "نسيتي كلمة السر؟", forgot_desc: "حط الإيميل ديالك و غادي نبعتو ليك رابط باش تبدل كلمة السر.", forgot_email_placeholder: "حط الإيميل المسجل ديالك", forgot_send_btn: "صيفط رابط إعادة التعيين",
+        reset_title: "كود سري جديد", reset_new_password_placeholder: "كود سري جديد", reset_confirm_placeholder: "أكد الكود السري الجديد", reset_update_btn: "بدل الكود السري",
+        description: "مرحبا بيك في ردع، المنصة لي كتحميك من الميساجات ديال النصب والسبام.",account_updated_success: "الحساب تحدّث بنجاح!",
         home: "الرئيسية", about: "شكون احنا", login: "تسجيل الدخول", register: "تسجيل", email: "البريد الإلكتروني :", password: "كلمة المرور :", username: "اسم المستخدم :", login_btn: "تسجيل الدخول إلى الردع", create_account: "إنشاء حساب",
-        msg: "الرسائل", lnk: "الروابط", eml: "البريد الإلكتروني", fil: "الملفات", adv: "نصيحة",
+        msg: "الرسائل", lnk: "الروابط", eml: "البريد الإلكتروني", fil: "الملفات", adv: "نصيحة",password_updated_success: "الكود السري تبدل بنجاح!",
         msg_title: "كاشف الميساجات ديال النصب والسبام", detect_title: "كاشف التهديدات بالذكاء", detect_desc: "حط أي محتوى مشبوه. الذكاء الاصطناعي غادي يحلله.", detect_legend: "محلل الذكاء", detect_label: "المحتوى المشبوه:", detect_btn: "حلل بالذكاء الاصطناعي", detect_loading: "الذكاء الاصطناعي كيحلل...", detect_risk: "درجة الخطر:",
         msg_desc: "لصق أي ميساج جاك فيه الشك، سواء إس إم إس (SMS) أو إيميل هنا لتحت. السيستيم ديال منصة ردع غادي يحلل الهدرة باش يشوف واش كاين شي بلان ديال النصب، ليانات شفارة أو كذوب.",
-        scan_title: "ماكينة الفحص والتحليل", label_text: "الميساج لي شاك فيه:",
+        scan_title: "ماكينة الفحص والتحليل", label_text: "الميساج لي شاك فيه:",forgot_passw:"واش نسيتي كلمة المرور ؟",
         detected_words: "الكلمات لي فرشو الميساج (خطر):",email_summary: "ملخص الأمان", email_leak_check: "فحص التسريبات", email_validation: "صلاحية الإيميل", email_exposed: "البيانات لي تسربو", email_recommendations: "التوصيات",
         safe_title: "🛡️ هاني: ميساج عادي ما فيه تا خطر", safe_desc: "الميساج كيبان نقي ومزيان. ولكن ديما بقى حادي راسك من بنادم لي ما كتعرفوش.",
         spam_title: "⚠️ حاري راسك: هادا ميساج ديال النصب (Spam)", spam_desc: "خطر كبير! هاد الميساج فيه كلمات كيتستعملو ديما باش يطمعو العباد ويشفرو ليهم الوفا ولا لكونط بونكير ديالهم.",
@@ -187,6 +210,11 @@ const translations = {
         adv_wifi_vpn_desc: "VPN كتشفر الاتصال ديالك وتخبي النشاط ديالك من المهاجمين على نفس الشبكة. استعمل Proton VPN (الطبقة المجانية موجودة).", adv_email_header: "أمان الإيميل", adv_email_unsubscribe: "ما تلغي الاشتراك من الرسائل المزعجة بلا فكرة", 
         adv_email_unsubscribe_desc: "النقر على 'لغي الاشتراك' على رسالة إيميل مزعجة كتؤكد أن العنوان ديالك نشيط. فقط صنفها كرسالة مزعجة ومسحها.", adv_email_breached: "تحقق واش الإيميل ديالك اتسرب", adv_email_breached_desc: "استعمل ماسح الإيميل في ردع باش تشوف واش العنوان ديالك ظهر في اختراقات معروفة واخذ إجراء فوراً إذا كان هاك.", 
         adv_email_filters: "استعمل مرشحات الإيميل والرسائل المزعجة", adv_email_filters_desc: "فعل مرشحات الرسائل المزعجة في برنامج الإيميل ديالك. Gmail و Outlook فيهم حماية مدمجة — تأكد من تفعيلها.",
+        default_user: "مستخدم", back_home: "الرجوع للرئيسية", stats_records: "الاحصائيات والسجلات", account_settings: "إعدادات الحساب", scanned_links: "الروابط لي تقلبو", scanned_files: "الملفات لي تقلبو",
+        scanned_messages: "المساجات لي تقلبو", scanned_emails: "لإيميلات لي تقلبو", detected_threats: "التهديدات لي تلقاو", recent_links: "آخر روابط قلبتيهم", type: "النوع", target_link: "الرابط لي مقصود", security_status: "حالة الأمان",
+        link: "رابط", safe: "نقي / آمن", harmful_suspicious: "خايب / فيه الشك", no_links_recorded: "مازال ما كاين حتى رابط مقلب هنا.", recent_files: "آخر ملفات قلبتيهم", file_name: "سمية الملف", danger: "خطر",
+        no_files_scanned: "مازال ما قلبتي حتى شي ملف.", recent_messages: "آخر مساجات قلبتيهم", message_content: "شنو مكتوب فالمساج", message_status: "حالة المساج", spam_fraud: "سبام / نصب", no_messages_scanned: "مازال ما قلبتي حتى شي مساج.", recent_emails: "آخر إيميلات قلبتيهم",
+        email_content: "شنو مكتوب فالإيميل", phishing_email: "إيميل ديال النصب", no_emails_scanned: "مازال ما قلبتي حتى شي إيميل.", personal_settings: "إعدادات الحساب ديالك", change_image: "بدل التصويرة", new_username: "سمية جديدة", email_cannot_edit: "لإيميل (ما يمكنش تبدلو)", save_changes: "سجل التعديلات",dashboard:"لوحة التحكم",
     }
 };
 
@@ -209,6 +237,12 @@ function changeLanguage(lang) {
                 element.textContent = translation[key];
             }
         }
+    });
+
+    // set placeholders for inputs that use data-i18n-placeholder
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translation[key]) el.placeholder = translation[key];
     });
 
     const langMenu = document.querySelector(".lang-menu-container");

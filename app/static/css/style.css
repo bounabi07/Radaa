@@ -311,33 +311,37 @@ textarea:focus {
     outline: none;
 }
 
+
+
 .result-box {
     margin-top: 25px;
     padding: 20px;
     border-radius: 16px;
     font-size: 15px;
     line-height: 1.6;
-    border-left: 5px solid;
     backdrop-filter: blur(14px);
     animation: fadeIn 0.4s ease-in-out;
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
 }
 
 .safe-alert {
     background: rgba(34, 197, 94, 0.1);
-    border-color: var(--success);
-    color: var(--success);
+    border-color: #22c55e;
+    color: #22c55e;
 }
 
 .spam-alert {
     background: rgba(239, 68, 68, 0.1);
-    border-color: var(--danger);
+    border-color: #ef4444;
     color: #f87171;
 }
 
 .warn-alert {
     background: rgba(245, 158, 11, 0.1);
-    border-color: var(--warning);
-    color: var(--warning);
+    border-color: #f59e0b;
+    color: #f59e0b;
 }
 
 .result-box h3 { margin-top: 0; font-size: 18px; font-weight: bold; }
@@ -542,10 +546,5 @@ textarea:focus {
     width: 0%;
     border-radius: 999px;
      transition: width .8s ease;
-    background: linear-gradient(
-        90deg,
-        #22c55e,
-        #4ade80
-    );
-    box-shadow: 0 0 12px rgba(34,197,94,.5);
+   
 }

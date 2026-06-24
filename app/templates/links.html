@@ -243,32 +243,37 @@
         }
 
         function renderResult(url, keywords, ai) {
-            const results = document.getElementById("resultsSection");
-            let cssClass = "safe", verdict = "✅ Safe", riskScore = 10, desc = "No threats detected.";
-            if (ai && ai.verdict) {
-                cssClass = ai.verdict === "SPAM" ? "spam" : ai.verdict === "WARNING" ? "warning" : "safe";
-                verdict = ai.title || ai.verdict;
-                riskScore = ai.risk_score || 10;
-                desc = ai.explanation || "";
-            } else if (keywords.length > 0) {
-                cssClass = "warning";
-                verdict = "⚠️ Suspicious Keywords";
-                riskScore = Math.min(keywords.length * 15, 90);
-                desc = "Found: " + keywords.join(", ");
-            }
-            const barColor = cssClass === "spam" ? "#ef4444" : cssClass === "warning" ? "#f59e0b" : "#22c55e";
-            results.innerHTML += `
-                <div class="result-item ${cssClass}">
-                    ${ai ? '<span class="badge-ai"><i class="fa-solid fa-robot"></i> AI</span>' : '<span class="badge-kw"><i class="fa-solid fa-key"></i> Keywords</span>'}
-                    <div class="result-url"><i class="fa-solid fa-link"></i> ${url}</div>
-                    <div class="result-verdict">${verdict}</div>
-                    <div class="result-desc">${desc}</div>
-                    ${keywords.length > 0 ? `<div style="margin-top:8px; color:#f59e0b; font-size:0.8rem;">🔑 Keywords: ${keywords.join(", ")}</div>` : ""}
-                    <div class="risk-bar-track">
-                        <div class="risk-bar-fill" style="width:${riskScore}%; background:${barColor};"></div>
-                    </div>
-                </div>`;
-        }
+    const results = document.getElementById("resultsSection");
+    let cssClass = "safe", verdict = "✅ Safe", riskScore = 10, desc = "No threats detected.";
+    
+    if (ai && ai.verdict) {
+        // تم التعديل هنا ليفحص MALICIOUS بدلاً من SPAM
+        cssClass = ai.verdict === "MALICIOUS" ? "spam" : ai.verdict === "WARNING" ? "warning" : "safe";
+        verdict = ai.title || ai.verdict;
+        riskScore = ai.risk_score || 10;
+        desc = ai.explanation || "";
+    } else if (keywords.length > 0) {
+        cssClass = "warning";
+        verdict = "⚠️ Suspicious Keywords";
+        riskScore = Math.min(keywords.length * 15, 90);
+        desc = "Found: " + keywords.join(", ");
+    }
+    
+    // هنا سيتم تلوين الشريط باللون الأحمر #ef4444 بنجاح لأن cssClass أصبحت "spam"
+    const barColor = cssClass === "spam" ? "#ef4444" : cssClass === "warning" ? "#f59e0b" : "#22c55e";
+    
+    results.innerHTML += `
+        <div class="result-item ${cssClass}">
+            ${ai ? '<span class="badge-ai"><i class="fa-solid fa-robot"></i> AI</span>' : '<span class="badge-kw"><i class="fa-solid fa-key"></i> Keywords</span>'}
+            <div class="result-url"><i class="fa-solid fa-link"></i> ${url}</div>
+            <div class="result-verdict">${verdict}</div>
+            <div class="result-desc">${desc}</div>
+            ${keywords.length > 0 ? `<div style="margin-top:8px; color:#f59e0b; font-size:0.8rem;">🔑 Keywords: ${keywords.join(", ")}</div>` : ""}
+            <div class="risk-bar-track">
+                <div class="risk-bar-fill" style="width:${riskScore}%; background:${barColor};"></div>
+            </div>
+        </div>`;
+}
     </script>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

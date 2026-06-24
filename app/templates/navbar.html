@@ -1,20 +1,33 @@
-<nav class="nav-bar">
-    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span></a>
-    <a href="{{ url_for('main.about') }}"><i class="fa-solid fa-info-circle"></i> <span data-i18n="about">About</span></a>
+<nav class="nav-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(56, 189, 248, 0.2);">
     
-    {% if username %}
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <a href="{{ url_for('main.index') }}" style="text-decoration: none; color: #cbd5e1;">
+            <i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span>
+        </a>
+        <a href="{{ url_for('main.about') }}" style="text-decoration: none; color: #cbd5e1;">
+            <i class="fa-solid fa-info-circle"></i> <span data-i18n="about">About</span>
+        </a>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 15px;">
+        {% if session.get('logged_in') %}
+            <a href="{{ url_for('main.dashboard') }}" class="nav-profile-link" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #38bdf8; font-weight: bold;">
+                <img src="{{ profile_image if 'http' in profile_image else url_for('static', filename='images/' + profile_image) }}" 
+                     alt="Profile" 
+                     style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1.5px solid #38bdf8;">
+                <span>{{ username }}</span>
+            </a>
 
-        
-        <span class="user-profile" style="color: #38bdf8; margin-left: 15px; font-weight: bold;">
-            <i class="fa-solid fa-user-shield"></i> {{ username }}
-        </span>
-      
-<a href="{{ url_for('main.logout') }}" style="color: #ef4444;">
-    <i class="fa-solid fa-power-off" style="color: #ef4444;"></i> <span data-i18n="logout">Logout</span>
-</a>
-    {% else %}
-        {% if request.endpoint != 'main.login' %}
-            <a href="{{ url_for('main.login') }}" ><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="login">Login</span></a>
+            <a href="{{ url_for('main.logout') }}" style="color: #ef4444; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-power-off"></i> <span data-i18n="logout">Logout</span>
+            </a>
+        {% else %}
+            {% if request.endpoint != 'main.login' %}
+                <a href="{{ url_for('main.login') }}" style="text-decoration: none; color: #cbd5e1;">
+                    <i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="login">Login</span>
+                </a>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
+
 </nav>

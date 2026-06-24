@@ -142,6 +142,17 @@
     <div class="hero-bg"></div>
     <div class="city-glow"></div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container" style="width: 100%; px-4; margin-bottom: 20px;">
+      {% for category, message in messages %}
+        <div data-i18n="{{ message }}" style="padding: 14px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; background-color: {% if category == 'success' %}#2ecc71{% else %}#e74c3c{% endif %}; color: #000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center">
+          {{ message }} </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
     <div class="lang-menu-container">
         <div class="lang-circle-btn" onclick="toggleLangMenu()">🌐</div>
         <div class="lang-dropdown" id="langDropdown">
@@ -151,6 +162,8 @@
             <a href="javascript:void(0)" onclick="changeLanguage('ary')">الدارجة (ARY)</a>
         </div>
     </div>
+
+    
 
     {% include 'navbar.html' %}
 
@@ -163,23 +176,32 @@
             Welcome to Radaa a platform that ensures you are safe from spam
         </p>
 
-        <div class="grid-container">
+       <div class="grid-container">
             <a href="{{ url_for('main.messages_page') }}" class="cube-link">
                 <i class="fa-solid fa-envelope-circle-check"></i>
                 <span data-i18n="msg">Messages</span>
             </a>
+            
             <a href="{{ url_for('main.links') }}" class="cube-link">
                 <i class="fa-solid fa-link"></i>
                 <span data-i18n="lnk">Links</span>
             </a>
+            
             <a href="{{ url_for('main.email_page') }}" class="cube-link">
                 <i class="fa-solid fa-at"></i>
                 <span data-i18n="eml">Email</span>
             </a>
+            
             <a href="{{ url_for('main.files_page') }}" class="cube-link">
                 <i class="fa-solid fa-file-shield"></i>
                 <span data-i18n="fil">Files</span>
             </a>
+
+            <a href="{{ url_for('main.dashboard') }}" class="cube-link full-width" style="border-color: rgba(129, 140, 248, 0.4); background: rgba(30, 41, 59, 0.7);">
+                <i class="fa-solid fa-chart-pie" style="color: #818cf8;"></i>
+                <span data-i18n="dashboard" style="color: #818cf8;">Dashboard</span>
+            </a>
+            
             <a href="{{ url_for('main.advice') }}" class="cube-link full-width">
                 <i class="fa-solid fa-lightbulb"></i>
                 <span data-i18n="adv">Advice</span>
