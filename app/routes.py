@@ -34,8 +34,10 @@ def init_oauth(app):
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-SENDER_EMAIL = "radaaplatform@gmail.com"
-SENDER_PASSWORD = "inwleeopycxcajhc" 
+SENDER_EMAIL = os.getenv('SENDER_EMAIL')
+SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')
+SUPER_SECRET_KEY = os.getenv('SUPER_SECRET_KEY', 'SUPER_SECRET_KEY')
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
 
 def send_activation_email(user_email, activation_link):
     msg = MIMEMultipart()
@@ -118,29 +120,53 @@ def login():
         if username:
             existing = User.query.filter_by(email=email).first()
             if existing:
-                return render_template('connecte.html', error='البريد الإلكتروني مستخدم مسبقاً')
+                return render_template(
+                    'connecte.html',
+                    error='Email already in use',
+                    error_key='email_already_used'
+                )
 
             hashed_pw = generate_password_hash(password)
             new_user = User(username=username, email=email, password=hashed_pw)
             db.session.add(new_user)
             db.session.commit()
             
-            s = URLSafeTimedSerializer("SUPER_SECRET_KEY")
+            s = URLSafeTimedSerializer(SUPER_SECRET_KEY)
             token = s.dumps(email, salt='email-activation-salt')
             activation_link = url_for('main.activate_account', token=token, _external=True)
             
             if send_activation_email(email, activation_link):
-                return render_template('connecte.html', success='تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني لتفعيله قبل تسجيل الدخول.')
+                return render_template(
+                    'connecte.html',
+                    success='Account created successfully! Please check your email to activate it before logging in.',
+                    success_key='account_created_verify_email'
+                )
             else:
-                return render_template('connecte.html', error='تم إنشاء الحساب، ولكن فشل إرسال بريد التفعيل. يرجى المحاولة لاحقاً.')
+                return render_template(
+                    'connecte.html',
+                    error='Account created, but activation email failed to send. Please try again later.',
+                    error_key='activation_email_failed'
+                )
 
         user = User.query.filter_by(email=email).first()
         if not user:
-            return render_template('connecte.html', error='البريد الإلكتروني غير موجود')
+            return render_template(
+                'connecte.html',
+                error='Email not found',
+                error_key='email_not_found'
+            )
         if not check_password_hash(user.password, password):
-            return render_template('connecte.html', error='كلمة المرور غير صحيحة')
+            return render_template(
+                'connecte.html',
+                error='Incorrect password',
+                error_key='incorrect_password'
+            )
         if not user.is_verified:
-            return render_template('connecte.html', error='حسابك غير مفعّل بعد! يرجى مراجعة بريدك الإلكتروني وضغط رابط التفعيل.')
+            return render_template(
+                'connecte.html',
+                error='Your account is not verified yet! Please check your email and click the activation link.',
+                error_key='account_not_verified'
+            )
 
         session['logged_in'] = True
         session['username'] = user.username
@@ -151,22 +177,38 @@ def login():
 
 @main.route('/activate/<token>')
 def activate_account(token):
-    s = URLSafeTimedSerializer("SUPER_SECRET_KEY")
+    s = URLSafeTimedSerializer(SUPER_SECRET_KEY)
     try:
         email = s.loads(token, salt='email-activation-salt', max_age=7200)
     except:
-        return render_template('connecte.html', error="رابط التفعيل غير صالح أو انتهت صلاحيته.")
+        return render_template(
+            'connecte.html',
+            error='Activation link is invalid or has expired.',
+            error_key='activation_link_invalid_or_expired'
+        )
 
     user = User.query.filter_by(email=email).first()
     if user:
         if user.is_verified:
-            return render_template('connecte.html', success="الحساب مفعّل بالفعل! يمكنك تسجيل الدخول.")
+            return render_template(
+                'connecte.html',
+                success='Account already verified! You can log in.',
+                success_key='account_already_verified'
+            )
         else:
             user.is_verified = True
             db.session.commit()
-            return render_template('connecte.html', success="تم تفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول.")
+            return render_template(
+                'connecte.html',
+                success='Your account has been verified successfully! You can now log in.',
+                success_key='account_verified_success'
+            )
     else:
-        return render_template('connecte.html', error="المستخدم غير موجود.")
+        return render_template(
+            'connecte.html',
+            error='User not found.',
+            error_key='user_not_found'
+        )
 
 @main.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
@@ -175,16 +217,16 @@ def forgot_password():
         user = User.query.filter_by(email=email).first()
         
         if user:
-            s = URLSafeTimedSerializer("SUPER_SECRET_KEY")
+            s = URLSafeTimedSerializer(SUPER_SECRET_KEY)
             token = s.dumps(email, salt='password-reset-salt')
             reset_link = url_for('main.reset_password', token=token, _external=True)
             
             if send_reset_email(email, reset_link):
-                flash("A reset link has been sent to your email.", "success")
+                flash("reset_link_sent", "success")
             else:
-                flash("Failed to send email. Try again later.", "danger")
+                flash("reset_link_failed", "danger")
         else:
-            flash("If the email exists, a reset link has been sent.", "info")
+            flash("reset_link_if_exists_sent", "info")
             
         return redirect(url_for('main.forgot_password'))
         
@@ -192,11 +234,11 @@ def forgot_password():
 
 @main.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-    s = URLSafeTimedSerializer("SUPER_SECRET_KEY")
+    s = URLSafeTimedSerializer(SUPER_SECRET_KEY)
     try:
         email = s.loads(token, salt='password-reset-salt', max_age=3600)
     except:
-        flash("The reset link is invalid or has expired.", "danger")
+        flash("reset_link_invalid_or_expired", "danger")
         return redirect(url_for('main.forgot_password'))
 
     if request.method == 'POST':
@@ -204,7 +246,7 @@ def reset_password(token):
         confirm_password = request.form.get('confirm_password')
 
         if new_password != confirm_password:
-            flash("Confirm password doesn't match!", "danger")
+            flash("confirm_password_mismatch", "danger")
             return redirect(url_for('main.reset_password', token=token))
 
         user = User.query.filter_by(email=email).first()
@@ -289,7 +331,7 @@ Rules:
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:5000",
+                "HTTP-Referer": BASE_URL,
                 "X-Title": "Radaa"
             },
             json={
@@ -361,7 +403,7 @@ Rules:
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:5000",
+                "HTTP-Referer": BASE_URL,
                 "X-Title": "Radaa"
             },
             json={
@@ -480,7 +522,7 @@ def ai_scan_file():
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:5000",
+                "HTTP-Referer": BASE_URL,
                 "X-Title": "Radaa"
             },
             json={

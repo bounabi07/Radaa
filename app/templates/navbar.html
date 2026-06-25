@@ -19,11 +19,11 @@
             </a>
 
             <a href="{{ url_for('main.logout') }}" style="color: #ef4444; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                <i class="fa-solid fa-power-off"></i> <span data-i18n="logout">Logout</span>
+              <i class="fas fa-power-off" style="color: #e74c3c;"></i> <span data-i18n="logout">Logout</span>
             </a>
         {% else %}
             {% if request.endpoint != 'main.login' %}
-                <a href="{{ url_for('main.login') }}" style="text-decoration: none; color: #cbd5e1;">
+                <a href="{{ url_for('main.login') }}" style="text-decoration: none; color:#38bdf8;">
                     <i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="login">Login</span>
                 </a>
             {% endif %}
