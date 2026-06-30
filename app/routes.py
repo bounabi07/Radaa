@@ -32,50 +32,49 @@ def init_oauth(app):
         client_kwargs={'scope': 'openid email profile'}
     )
 
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-SENDER_EMAIL = os.getenv('SENDER_EMAIL')
-SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')
 SUPER_SECRET_KEY = os.getenv('SUPER_SECRET_KEY', 'SUPER_SECRET_KEY')
-BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
+BASE_URL = os.getenv('BASE_URL', 'http://127.0.0.1:5000')
+
+def send_to_brevo(to_email, subject, html_content):
+   
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": os.getenv("BREVO_API_KEY"),
+        "content-type": "application/json"
+    }
+    payload = {
+        "sender": {
+            "name": "RADAA System", 
+            "email": os.getenv("SENDER_EMAIL")
+        },
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "htmlContent": html_content
+    }
+    
+    response = req.post(url, json=payload, headers=headers)
+    return response.status_code == 201
 
 def send_activation_email(user_email, activation_link):
-    msg = MIMEMultipart()
-    msg['From'] = SENDER_EMAIL
-    msg['To'] = user_email
-    msg['Subject'] = "Activate Your RADAA Account"
-
-    body = f"Welcome to RADAA!\n\nPlease click the link below to verify your email address and activate your account:\n{activation_link}\n\nThis link will expire in 2 hours."
-    msg.attach(MIMEText(body, 'plain'))
-    try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SENDER_EMAIL, SENDER_PASSWORD)
-        server.sendmail(SENDER_EMAIL, user_email, msg.as_string())
-        server.quit()
-        return True
-    except Exception as e:
-        print(f"Activation Email Error: {e}")
-        return False
+    subject = "Activate Your RADAA Account"
+    html_content = f"""
+    <p>Welcome to RADAA!</p>
+    <p>Please click the link below to verify your email address and activate your account:</p>
+    <p><a href="{activation_link}" style="padding: 10px 20px; background-color: #2b6cb0; color: white; text-decoration: none; border-radius: 5px;">Activate Account</a></p>
+    <p>This link will expire in 2 hours.</p>
+    """
+    return send_to_brevo(user_email, subject, html_content)
 
 def send_reset_email(user_email, reset_link):
-    msg = MIMEMultipart()
-    msg['From'] = SENDER_EMAIL
-    msg['To'] = user_email
-    msg['Subject'] = "Reset Your Password - RADAA"
-
-    body = f"Hello,\n\nYou requested to reset your password. Please click the link below to set a new password:\n{reset_link}\n\nThis link will expire in 1 hour."
-    msg.attach(MIMEText(body, 'plain'))
-    try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SENDER_EMAIL, SENDER_PASSWORD)
-        server.sendmail(SENDER_EMAIL, user_email, msg.as_string())
-        server.quit()
-        return True
-    except Exception as e:
-        print(f"SMTP Error: {e}")
-        return False
+    subject = "Reset Your Password - RADAA"
+    html_content = f"""
+    <p>Hello,</p>
+    <p>You requested to reset your password. Please click the link below to set a new password:</p>
+    <p><a href="{reset_link}" style="padding: 10px 20px; background-color: #e53e3e; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
+    <p>This link will expire in 1 hour.</p>
+    """
+    return send_to_brevo(user_email, subject, html_content)
 
 @main.route('/')
 def index():
@@ -335,7 +334,7 @@ Rules:
                 "X-Title": "Radaa"
             },
             json={
-                "model": "google/gemma-4-31b-it:free",
+                "model": "google/gemma-4-26b-a4b-it:free",
                 "messages": [{"role": "user", "content": prompt}]
             }
         )
@@ -382,38 +381,95 @@ def ai_scan_link():
     url = data.get('url', '')
     lang = data.get('lang', 'en')
 
-    OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
-    api_url = "https://openrouter.ai/api/v1/chat/completions"
-    lang_name = "Arabic" if lang in ['ar', 'ary'] else "French" if lang == 'fr' else "English"
+    GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+    VT_API_KEY = os.getenv('VIRUSTOTAL_API_KEY')
+
+   
+    suspicious_indicators = [
+        "bit.ly", "tinyurl", "goo.gl", "shorturl", "ow.ly",
+        ".tk", ".ml", ".ga", ".cf", ".gq", ".xyz",
+        "login", "verify", "secure", "account", "password",
+        "bank", "suspended", "urgent", "click", "confirm",
+        "update", "winner", "prize"
+    ]
+    looks_suspicious = any(ind in url.lower() for ind in suspicious_indicators)
+
+    vt_hit = False
+    vt_malicious_count = 0
+
+    if looks_suspicious:
+        try:
+            url_id = base64.urlsafe_b64encode(url.encode()).decode().strip("=")
+            vt_response = req.get(
+                f"https://www.virustotal.com/api/v3/urls/{url_id}",
+                headers={"x-apikey": VT_API_KEY},
+                timeout=8
+            )
+            if vt_response.status_code == 200:
+                vt_data = vt_response.json()
+                stats = vt_data["data"]["attributes"]["last_analysis_stats"]
+                vt_malicious_count = stats.get("malicious", 0) + stats.get("suspicious", 0)
+                vt_hit = vt_malicious_count > 0
+            elif vt_response.status_code == 404:
+                req.post(
+                    "https://www.virustotal.com/api/v3/urls",
+                    headers={"x-apikey": VT_API_KEY},
+                    data={"url": url},
+                    timeout=8
+                )
+        except Exception as e:
+            print("VirusTotal URL Scan Error:", str(e))
+
+   
+    vt_context = ""
+    if vt_hit:
+        vt_context = f"\n\nIMPORTANT: VirusTotal scanned this URL and {vt_malicious_count} security engines flagged it as malicious or suspicious. This is CONFIRMED by VirusTotal's threat database. You MUST classify this as MALICIOUS."
+
+    languages_map = {
+        'ar': 'Arabic (العربية)', 'en': 'English',
+        'fr': 'French (Français)', 'ary': 'Moroccan Darija (الدارجة المغربية)'
+    }
+    lang_name = languages_map.get(lang, 'English')
 
     prompt = f"""You are a JSON-only cybersecurity classifier. You MUST respond with ONLY a JSON object, no explanations, no conversation.
 
 Analyze this URL and determine if it is malicious, phishing, or safe:
-"{url}"
+"{url}"{vt_context}
 
 Rules:
 - verdict MUST be exactly one of: MALICIOUS, WARNING, SAFE
 - risk_score MUST be a number 0-100
-- Response MUST be valid JSON only, nothing else
+- Response MUST be valid JSON only, nothing else.
 
-{{"verdict": "MALICIOUS", "risk_score": 85, "title": "Typosquatting Domain", "explanation": "detailed explanation in {lang_name}"}}"""
+CRITICAL REQUIREMENT FOR TRANSLATION:
+You MUST write both the "title" and "explanation" fields entirely in {lang_name}.
+Do not use English for "title" or "explanation" unless the requested language is English.
+
+Template structure:
+{{"verdict": "MALICIOUS", "risk_score": 85, "title": "Write the warning title here in {lang_name}", "explanation": "Write the analysis here in {lang_name}"}}"""
 
     try:
-        response = req.post(api_url,
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": BASE_URL,
-                "X-Title": "Radaa"
-            },
+        response = req.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
             json={
-                "model": "google/gemma-4-31b-it:free",
-                "messages": [{"role": "user", "content": prompt}]
+                "model": "llama-3.1-8b-instant",
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {"type": "json_object"}
             }
         )
         raw = response.json()
-        answer = raw['choices'][0]['message']['content'].replace("```json", "").replace("```", "").strip()
-        return jsonify(json.loads(answer))
+        answer = raw['choices'][0]['message']['content'].strip()
+        result_json = json.loads(answer)
+
+        if vt_hit:
+            result_json['verdict'] = 'MALICIOUS'
+            result_json['risk_score'] = max(result_json.get('risk_score', 0), 90)
+            result_json['virustotal_flagged'] = True
+            result_json['vt_engines_count'] = vt_malicious_count
+
+        return jsonify(result_json)
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -502,7 +558,7 @@ def ai_scan_file():
                 verdict, risk_score = "WARNING", 25
                 title, explanation = m["low_detection_title"], m["low_detection_desc"]
         elif suspicious > 0:
-            dict, risk_score = "WARNING", 50
+            verdict, risk_score = "WARNING", 50
             title, explanation = m["suspicious_title"], m["suspicious_desc"]
         else:
             verdict, risk_score = "SAFE", 5
@@ -526,7 +582,7 @@ def ai_scan_file():
                 "X-Title": "Radaa"
             },
             json={
-                "model": "google/gemma-4-31b-it:free",
+                "model": "google/gemma-4-26b-a4b-it:free",
                 "messages": [{"role": "user", "content": prompt}]
             }
         )
@@ -779,3 +835,13 @@ def inject_user_data():
         'username': '?',
         'profile_image': 'default.png'
     }
+
+
+
+
+
+
+
+
+
+

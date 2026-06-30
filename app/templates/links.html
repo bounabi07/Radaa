@@ -199,15 +199,12 @@
             }
         }
 
-        const maliciousKeywords = [
-            "bit.ly", "tinyurl", "goo.gl", "shorturl", "ow.ly", "t.co",
-            "login", "signin", "verify", "secure", "update", "confirm",
-            "account", "banking", "paypal", "netflix", "amazon", "apple",
-            "free", "prize", "winner", "click", "urgent", "suspended",
-            "password", "credential", "phishing", "malware", "virus",
-            ".ru", ".xyz", ".tk", ".ml", ".ga", ".cf", ".gq",
-            "http://", "0.0.0.0", "192.168", "localhost"
-        ];
+      const maliciousKeywords = [
+    "bit.ly", "tinyurl", "goo.gl", "shorturl", "ow.ly",
+    "phishing", "malware", "virus",
+    ".tk", ".ml", ".ga", ".cf", ".gq",
+    "0.0.0.0", "192.168"
+];
 
         function quickScan(url) {
             const lower = url.toLowerCase();
@@ -235,7 +232,9 @@
                     aiResult = await response.json();
                 } catch (e) { aiResult = null; }
                 renderResult(url, keywords, aiResult);
-                const isSafe = aiResult ? aiResult.verdict === "SAFE" : keywords.length === 0;
+                const isSafe = aiResult && !aiResult.error 
+                  ? (aiResult.verdict === "SAFE") 
+                  : keywords.length === 0;
                 await saveLinkLog(url, isSafe);
             }
             loading.style.display = "none";
@@ -247,8 +246,8 @@
     let cssClass = "safe", verdict = "✅ Safe", riskScore = 10, desc = "No threats detected.";
     
     if (ai && ai.verdict) {
-        // تم التعديل هنا ليفحص MALICIOUS بدلاً من SPAM
-        cssClass = ai.verdict === "MALICIOUS" ? "spam" : ai.verdict === "WARNING" ? "warning" : "safe";
+        
+        cssClass = ai.verdict === "MALICIOUS" || ai.verdict === "SPAM" ? "spam" : ai.verdict === "WARNING" ? "warning" : "safe";
         verdict = ai.title || ai.verdict;
         riskScore = ai.risk_score || 10;
         desc = ai.explanation || "";
@@ -259,7 +258,7 @@
         desc = "Found: " + keywords.join(", ");
     }
     
-    // هنا سيتم تلوين الشريط باللون الأحمر #ef4444 بنجاح لأن cssClass أصبحت "spam"
+    
     const barColor = cssClass === "spam" ? "#ef4444" : cssClass === "warning" ? "#f59e0b" : "#22c55e";
     
     results.innerHTML += `
